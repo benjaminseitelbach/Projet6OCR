@@ -1,5 +1,6 @@
 package com.paymybuddy.paymybuddyapp.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Account {
@@ -10,6 +11,11 @@ public class Account {
 	private int amount;
 	private List<BankAccount> bankAccounts;
 	private List<Relationship> relationships;
+	
+	public Account() {
+		bankAccounts = new ArrayList<>();
+		relationships = new ArrayList<>();
+	}
 	
 	public String getEmail() {
 		return email;
@@ -52,6 +58,22 @@ public class Account {
 	}
 	public void setRelationships(List<Relationship> relationships) {
 		this.relationships = relationships;
+	}
+	
+	public void addBankAccount(BankAccount bankAccount) {
+		bankAccounts.add(bankAccount);
+	}
+	public void addRelationship(Relationship relationship) {
+		relationships.add(relationship);
+	}
+	
+	public BankAccount getBankAccount(String IBAN) {
+		for(BankAccount bankAccount : bankAccounts) {
+			if(bankAccount.getIBAN().equals(IBAN)) {
+				return bankAccount;
+			}
+		}
+		return null;
 	}
 	
 	@Override

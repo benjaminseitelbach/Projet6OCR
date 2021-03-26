@@ -17,60 +17,60 @@ import com.paymybuddy.paymybuddyapp.model.Account;
 public class AccountDaoImpl implements AccountDao {
 
 	private static final Logger logger = LogManager.getLogger("AccountDaoImpl");
-	
+
 	public DBConfig dbConfig = new DBConfig();
-	
+
 	public Account addAccount(Account account) {
 
 		Connection con = null;
-        PreparedStatement ps = null;
-        try {
-            con = dbConfig.getConnection();
-            ps = con.prepareStatement("insert into account(EMAIL, PASSWORD, FIRSTNAME, LASTNAME) values(?,?,?,?)");
-            //EMAIL, PASSWORD, FIRSTNAME, LASTNAME
-            ps.setString(1, account.getEmail());
-            ps.setString(2, account.getPassword());
-            ps.setString(3, account.getFirstName());
-            ps.setString(4, account.getLastName());
-            ps.execute();
-            return account;
-        }catch (Exception ex){
-            logger.error("Error saving new account",ex);
-        }finally {
-            dbConfig.closeConnection(con);
-            dbConfig.closePreparedStatement(ps);            
-        }
-        return null;
+		PreparedStatement ps = null;
+		try {
+			con = dbConfig.getConnection();
+			ps = con.prepareStatement("insert into account(EMAIL, PASSWORD, FIRSTNAME, LASTNAME) values(?,?,?,?)");
+			// EMAIL, PASSWORD, FIRSTNAME, LASTNAME
+			ps.setString(1, account.getEmail());
+			ps.setString(2, account.getPassword());
+			ps.setString(3, account.getFirstName());
+			ps.setString(4, account.getLastName());
+			ps.execute();
+			return account;
+		} catch (Exception ex) {
+			logger.error("Error saving new account", ex);
+		} finally {
+			dbConfig.closeConnection(con);
+			dbConfig.closePreparedStatement(ps);
+		}
+		return null;
 	}
-	
+
 	public int getId(Account account) {
 		Connection con = null;
-    	PreparedStatement ps = null;
-        ResultSet rs = null;
+		PreparedStatement ps = null;
+		ResultSet rs = null;
 
-        try {
-        	con = dbConfig.getConnection();
-        	
-        	ps = con.prepareStatement("SELECT ID FROM ACCOUNT WHERE EMAIL=? AND PASSWORD=?");
-            ps.setString(1, account.getEmail());
-            ps.setString(2, account.getPassword());
-        	rs = ps.executeQuery();
-        	if(rs.next()) {
-        		return rs.getInt(1);
-        	}
+		try {
+			con = dbConfig.getConnection();
 
-        }catch (Exception ex){
-            logger.error("Error getting account ID", ex);
-        }finally {
-        	dbConfig.closeConnection(con);
-            dbConfig.closeResultSet(rs);
-            dbConfig.closePreparedStatement(ps);
-        }
+			ps = con.prepareStatement("SELECT ID FROM ACCOUNT WHERE EMAIL=? AND PASSWORD=?");
+			ps.setString(1, account.getEmail());
+			ps.setString(2, account.getPassword());
+			rs = ps.executeQuery();
+			if (rs.next()) {
+				return rs.getInt(1);
+			}
+
+		} catch (Exception ex) {
+			logger.error("Error getting account ID", ex);
+		} finally {
+			dbConfig.closeConnection(con);
+			dbConfig.closeResultSet(rs);
+			dbConfig.closePreparedStatement(ps);
+		}
 
 		return 0;
-				
+
 	}
-	
+
 	public List<Account> getAccounts(List<Integer> accountsIds) {
 		Connection con = null;
     	PreparedStatement ps = null;
@@ -79,14 +79,15 @@ public class AccountDaoImpl implements AccountDao {
         try {
         	con = dbConfig.getConnection();
         	for(Integer accountId : accountsIds) {
-        		ps = con.prepareStatement("SELECT EMAIL, FIRSTNAME, LASTNAME FROM ACCOUNT WHERE ID=?");
+        		ps = con.prepareStatement("SELECT EMAIL, PASSWORD, FIRSTNAME, LASTNAME FROM ACCOUNT WHERE ID=?");
                 ps.setInt(1, accountId);
             	rs = ps.executeQuery();
             	if(rs.next()) {
             		Account account = new Account();
             		account.setEmail(rs.getString(1));
-            		account.setFirstName(rs.getString(2));
-            		account.setLastName(rs.getString(3));
+            		account.setPassword(rs.getString(2));
+            		account.setFirstName(rs.getString(3));
+            		account.setLastName(rs.getString(4));
             		accounts.add(account);
             	}
         	}
@@ -101,6 +102,38 @@ public class AccountDaoImpl implements AccountDao {
         }
 
 		return null;
+				
+	}
+
+	public Account getAccount(int accountId) {
+		Connection con = null;
+    	PreparedStatement ps = null;
+        ResultSet rs = null;
+        Account account = new Account();
+        try {
+        	con = dbConfig.getConnection();
+        	
+        	ps = con.prepareStatement("SELECT EMAIL, PASSWORD, FIRSTNAME, LASTNAME FROM ACCOUNT WHERE ID=?");
+            ps.setInt(1, accountId);
+            rs = ps.executeQuery();
+            if(rs.next()) {
+           
+            	account.setEmail(rs.getString(1));
+            	account.setPassword(rs.getString(2));
+            	account.setFirstName(rs.getString(3));
+            	account.setLastName(rs.getString(4));
+
+            }
+
+        }catch (Exception ex){
+            logger.error("Error getting account ID", ex);
+        }finally {
+        	dbConfig.closeConnection(con);
+            dbConfig.closeResultSet(rs);
+            dbConfig.closePreparedStatement(ps);
+        }
+
+		return account;
 				
 	}
 }

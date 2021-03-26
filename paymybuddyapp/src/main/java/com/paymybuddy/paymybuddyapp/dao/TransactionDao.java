@@ -1,6 +1,8 @@
 package com.paymybuddy.paymybuddyapp.dao;
 
+import com.paymybuddy.paymybuddyapp.model.Transaction;
+
 public interface TransactionDao {
 	
-	addTransaction
+	public Transaction addTransaction(Transaction transaction, int relationshipId, int bankAccountId);
 }
