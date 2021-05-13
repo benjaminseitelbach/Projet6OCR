@@ -1,5 +1,6 @@
 package com.paymybuddy.paymybuddyapp.dao;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -8,38 +9,49 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Repository;
 
 import com.paymybuddy.paymybuddyapp.config.DBConfig;
 import com.paymybuddy.paymybuddyapp.model.Account;
 import com.paymybuddy.paymybuddyapp.model.BankAccount;
 
-public class BankAccountDaoImpl implements BankAccountDao {
+@Repository
+public class BankAccountRepository implements IBankAccountRepository {
 	
 	private static final Logger logger = LogManager.getLogger("BankAccountDaoImpl");
 	
 	public DBConfig dbConfig = new DBConfig();
 	
-	public BankAccount addBankAccount(int accountId, BankAccount bankAccount) {
-
+	public List<BankAccount> getBankAccounts(Account account) {
 		Connection con = null;
         PreparedStatement ps = null;
-        
+        ResultSet rs = null;
+        List<BankAccount> result = new ArrayList<>();
         try {
             con = dbConfig.getConnection();
-            ps = con.prepareStatement("INSERT INTO bankaccount(IBAN, AMOUNT, account_ID) values(?,?,?)");
-            //IBAN, AMOUNT, account_ID
-            ps.setString(1, bankAccount.getIBAN());
-            ps.setFloat(2, bankAccount.getAmount());
-            ps.setInt(3, accountId);
-            ps.execute();
-            return bankAccount;
+            ps = con.prepareStatement("SELECT IBAN, AMOUNT FROM BANKACCOUNT INNER JOIN ACCOUNT ON"
+            		+ " ACCOUNT.ID=account_ID WHERE EMAIL=? AND PASSWORD=?");
+            //EMAIL, PASSWORD
+            ps.setString(1, account.getEmail());
+            ps.setString(2, account.getPassword());
+
+            rs = ps.executeQuery();
+            
+            while(rs.next()) {
+            	BankAccount bankAccount = new BankAccount();
+            	bankAccount.setIBAN(rs.getString(1));
+            	bankAccount.setAmount(rs.getBigDecimal(2));
+            	result.add(bankAccount);
+            }
+
         }catch (Exception ex){
-            logger.error("Error saving new Bank Account",ex);
+            logger.error("Error getting Bank Accounts from Account",ex);
         }finally {
             dbConfig.closeConnection(con);
             dbConfig.closePreparedStatement(ps);            
         }
-        return null;
+        return result;
+		
 	}
 	
 	public int getId(BankAccount bankAccount, int accountId) {
@@ -49,11 +61,10 @@ public class BankAccountDaoImpl implements BankAccountDao {
 
         try {
             con = dbConfig.getConnection();
-            ps = con.prepareStatement("SELECT ID FROM BANKACCOUNT WHERE IBAN=? AND AMOUNT=? AND account_ID=?");
-            //IBAN, AMOUNT, account_ID
+            ps = con.prepareStatement("SELECT ID FROM BANKACCOUNT WHERE IBAN=? AND account_ID=?");
+            //IBAN, account_ID
             ps.setString(1, bankAccount.getIBAN());
-            ps.setFloat(2, bankAccount.getAmount());
-            ps.setInt(3, accountId);
+            ps.setInt(2, accountId);
 
             rs = ps.executeQuery();
             
@@ -71,7 +82,34 @@ public class BankAccountDaoImpl implements BankAccountDao {
 		
 	}
 	
-	public void updateAmount(int bankAccountId, float newAmount) {
+	public BigDecimal getAmount(int bankAccountId) {
+		Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        BigDecimal result = new BigDecimal(0);
+        try {
+            con = dbConfig.getConnection();
+            ps = con.prepareStatement("SELECT AMOUNT FROM BANKACCOUNT WHERE ID=?");
+            //ID
+            ps.setInt(1, bankAccountId);
+
+            rs = ps.executeQuery();
+            
+            if(rs.next()) {
+            	result = rs.getBigDecimal(1);
+            }
+
+        }catch (Exception ex){
+            logger.error("Error getting amount",ex);
+        }finally {
+            dbConfig.closeConnection(con);
+            dbConfig.closePreparedStatement(ps);            
+        }
+        return result;
+		
+	}
+	
+	public void updateAmount(int bankAccountId, BigDecimal newAmount) {
 		Connection con = null;
         PreparedStatement ps = null;
         
@@ -79,7 +117,7 @@ public class BankAccountDaoImpl implements BankAccountDao {
             con = dbConfig.getConnection();
             ps = con.prepareStatement("UPDATE bankaccount SET AMOUNT=? WHERE ID=?");
             //AMOUNT, ID
-            ps.setFloat(1, newAmount);
+            ps.setBigDecimal(1, newAmount);
             ps.setInt(2, bankAccountId);
 
             ps.execute();
@@ -109,7 +147,7 @@ public class BankAccountDaoImpl implements BankAccountDao {
             
             if(rs.next()) {
             	bankAccount.setIBAN(rs.getString(1));
-            	bankAccount.setAmount(rs.getFloat(2));
+            	bankAccount.setAmount(rs.getBigDecimal(2));
 
             }
 
@@ -137,7 +175,7 @@ public class BankAccountDaoImpl implements BankAccountDao {
             
             if(rs.next()) {
             	bankAccount.setIBAN(rs.getString(1));
-            	bankAccount.setAmount(rs.getFloat(2));
+            	bankAccount.setAmount(rs.getBigDecimal(2));
 
             }
 
@@ -148,6 +186,36 @@ public class BankAccountDaoImpl implements BankAccountDao {
             dbConfig.closePreparedStatement(ps);            
         }
         return bankAccount;
+	}
+	
+	public List<BankAccount> getBankAccounts(int accountId) {
+		Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<BankAccount> bankAccounts = new ArrayList<>();
+        try {
+            con = dbConfig.getConnection();
+            ps = con.prepareStatement("SELECT IBAN, AMOUNT FROM BANKACCOUNT WHERE account_ID=?");
+            //account_ID
+            ps.setInt(1, accountId);
+
+            rs = ps.executeQuery();
+            
+            while(rs.next()) {
+            	BankAccount bankAccount = new BankAccount();
+            	bankAccount.setIBAN(rs.getString(1));
+            	bankAccount.setAmount(rs.getBigDecimal(2));
+            	bankAccounts.add(bankAccount);
+
+            }
+
+        }catch (Exception ex){
+            logger.error("Error getting Bank Account",ex);
+        }finally {
+            dbConfig.closeConnection(con);
+            dbConfig.closePreparedStatement(ps);            
+        }
+        return bankAccounts;
 	}
 	
 }

@@ -8,12 +8,14 @@ import java.util.List;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.stereotype.Repository;
 
 import com.paymybuddy.paymybuddyapp.config.DBConfig;
 import com.paymybuddy.paymybuddyapp.model.Account;
 import com.paymybuddy.paymybuddyapp.model.Transaction;
 
-public class TransactionDaoImpl implements TransactionDao {
+@Repository
+public class TransactionRepository implements ITransactionRepository {
 	private static final Logger logger = LogManager.getLogger("AccountDaoImpl");
 
 	public DBConfig dbConfig = new DBConfig();
@@ -26,7 +28,7 @@ public class TransactionDaoImpl implements TransactionDao {
 			ps = con.prepareStatement(
 					"INSERT INTO TRANSACTION(AMOUNT, DESCRIPTION, relationship_ID, bankaccount_ID) values(?,?,?,?)");
 			// AMOUNT, DESCRIPTION, relationship_ID, bankaccount_ID
-			ps.setFloat(1, transaction.getAmount());
+			ps.setBigDecimal(1, transaction.getAmount());
 			ps.setString(2, transaction.getDescription());
 			ps.setInt(3, relationshipId);
 			ps.setInt(4, bankAccountId);
@@ -58,7 +60,7 @@ public class TransactionDaoImpl implements TransactionDao {
 
 				Transaction transaction = new Transaction();
 				transaction.setId(rs.getInt(1));
-				transaction.setAmount(rs.getFloat(2));
+				transaction.setAmount(rs.getBigDecimal(2));
 				transaction.setDescription(rs.getString(3));
 				transaction.setBankAccountId(rs.getInt(4));
 				transactions.add(transaction);

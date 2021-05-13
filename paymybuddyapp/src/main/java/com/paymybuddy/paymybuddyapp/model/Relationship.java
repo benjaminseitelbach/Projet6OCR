@@ -3,7 +3,7 @@ package com.paymybuddy.paymybuddyapp.model;
 public class Relationship {
 	private int id;
 	private int accountId;
-	private int relationshipId;
+	private int connectionId;
 	
 	public int getId() {
 		return id;
@@ -17,11 +17,11 @@ public class Relationship {
 	public void setAccountId(int accountId) {
 		this.accountId = accountId;
 	}
-	public int getRelationshipId() {
-		return relationshipId;
+	public int getConnectionId() {
+		return connectionId;
 	}
-	public void setRelationshipId(int relationshipId) {
-		this.relationshipId = relationshipId;
+	public void setConnectionId(int connectionId) {
+		this.connectionId = connectionId;
 	}
 		
 }

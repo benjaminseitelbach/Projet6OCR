@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.paymybuddy.paymybuddyapp.dao.AccountDao;
+import com.paymybuddy.paymybuddyapp.dao.IAccountRepository;
 import com.paymybuddy.paymybuddyapp.integration.service.DBPrepareService;
 import com.paymybuddy.paymybuddyapp.model.Account;
 
@@ -15,7 +15,7 @@ import com.paymybuddy.paymybuddyapp.model.Account;
 public class AccountDaoIntegrationTest {
 
 	@Autowired
-	private AccountDao accountDao;
+	private IAccountRepository accountDao;
 	
 	private static DBPrepareService dbPrepareService;
 	

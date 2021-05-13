@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Account {
+	int id;
 	private String email;
 	private String password;
 	private String firstName;

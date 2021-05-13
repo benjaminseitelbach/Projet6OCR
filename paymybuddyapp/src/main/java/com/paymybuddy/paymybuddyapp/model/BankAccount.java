@@ -1,8 +1,10 @@
 package com.paymybuddy.paymybuddyapp.model;
 
+import java.math.BigDecimal;
+
 public class BankAccount {
 	private String IBAN;
-	private float amount;
+	private BigDecimal amount;
 	
 	public String getIBAN() {
 		return IBAN;
@@ -10,10 +12,10 @@ public class BankAccount {
 	public void setIBAN(String IBAN) {
 		this.IBAN = IBAN;
 	}
-	public float getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
-	public void setAmount(float amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 	

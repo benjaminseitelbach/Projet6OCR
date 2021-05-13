@@ -1,23 +1,26 @@
 package com.paymybuddy.paymybuddyapp.model;
 
+import java.math.BigDecimal;
+
 public class Transaction {
 	private int id;	
-	private float amount;
+	private BigDecimal amount;
 	private String description;
 	private Relationship relationship;
 	private int bankAccountId;
 	private BankAccount bankAccount;
-	
+	private Account relationshipAccount;
+		
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
 	}
-	public float getAmount() {
+	public BigDecimal getAmount() {
 		return amount;
 	}
-	public void setAmount(float amount) {
+	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
 	public String getDescription() {
@@ -43,6 +46,12 @@ public class Transaction {
 	}
 	public void setBankAccount(BankAccount bankAccount) {
 		this.bankAccount = bankAccount;
+	}
+	public Account getRelationshipAccount() {
+		return relationshipAccount;
+	}
+	public void setRelationshipAccount(Account relationshipAccount) {
+		this.relationshipAccount = relationshipAccount;
 	}
 	
 	@Override

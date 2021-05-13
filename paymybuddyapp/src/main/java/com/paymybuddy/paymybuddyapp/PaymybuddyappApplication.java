@@ -3,7 +3,7 @@ package com.paymybuddy.paymybuddyapp;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.paymybuddy.paymybuddyapp.dao.AccountDaoImpl;
+import com.paymybuddy.paymybuddyapp.dao.AccountRepository;
 import com.paymybuddy.paymybuddyapp.model.Account;
 import com.paymybuddy.paymybuddyapp.model.BankAccount;
 import com.paymybuddy.paymybuddyapp.model.Relationship;
@@ -14,6 +14,8 @@ import com.paymybuddy.paymybuddyapp.service.AccountService;
 public class PaymybuddyappApplication {
 
 	public static void main(String[] args) {
+		
+		/*
 		AccountService accountService = new AccountService();
 		//AccountDaoImpl accountDaoImpl = new AccountDaoImpl();
 		Account account1 = new Account();
@@ -28,6 +30,12 @@ public class PaymybuddyappApplication {
 		account2.setFirstName("Clément");
 		account2.setLastName("Boursault");
 		
+		Account account3 = new Account();
+		account3.setEmail("bseitelbach@gmail.com");
+		account3.setPassword("ouioui");
+		account3.setFirstName("Benjamin");
+		account3.setLastName("Seitelbach");
+		
 		BankAccount bankAccount = new BankAccount();
 		bankAccount.setIBAN("FR2012");
 		bankAccount.setAmount(4000);
@@ -38,13 +46,19 @@ public class PaymybuddyappApplication {
 		
 		accountService.addAccount(account1);
 		accountService.addAccount(account2);
+		accountService.addAccount(account3);
 		account1 = accountService.addBankAccount(account1, bankAccount);
 		account1 = accountService.addRelationship(account1, account2);
+		account1 = accountService.addRelationship(account1, account3);
 		Relationship relationship = account1.getRelationships().get(0);
-		accountService.addTransaction(transaction, relationship, bankAccount);
+		//accountService.addTransaction(transaction, relationship, bankAccount);
 		System.out.println(accountService.getEmittedTransactions(account1).toString());
 		//System.out.println(accountService.getRelationships(account1).toString());
 		//accountDaoImpl.addAccount(account1);
+		 * */
+		 
+		 
+		 
 		SpringApplication.run(PaymybuddyappApplication.class, args);
 	}
 
