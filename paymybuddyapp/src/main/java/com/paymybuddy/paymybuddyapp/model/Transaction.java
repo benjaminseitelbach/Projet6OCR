@@ -9,7 +9,7 @@ public class Transaction {
 	private Relationship relationship;
 	private int bankAccountId;
 	private BankAccount bankAccount;
-	private Account relationshipAccount;
+	private Account connection;
 		
 	public int getId() {
 		return id;
@@ -47,11 +47,11 @@ public class Transaction {
 	public void setBankAccount(BankAccount bankAccount) {
 		this.bankAccount = bankAccount;
 	}
-	public Account getRelationshipAccount() {
-		return relationshipAccount;
+	public Account getConnection() {
+		return connection;
 	}
-	public void setRelationshipAccount(Account relationshipAccount) {
-		this.relationshipAccount = relationshipAccount;
+	public void setConnection(Account connection) {
+		this.connection = connection;
 	}
 	
 	@Override

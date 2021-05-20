@@ -81,21 +81,7 @@ public class AccountService implements IAccountService {
 	
 	
 	
-	public List<Transaction> getEmittedTransactions(Account account) {
-		int accountId = accountDaoImpl.getId(account);
-		List<Relationship> relationships = relationshipDaoImpl.getRelationships(accountId);
-		List<Transaction> result = new ArrayList<>();
-		for(Relationship relationship : relationships) {
-			List<Transaction> transactions = transactionDaoImpl.getTransactions(relationship.getId());
-			for(Transaction transaction : transactions) {
-				transaction.setRelationship(relationship);
-				BankAccount bankAccount = bankAccountDaoImpl.getBankAccount(transaction.getBankAccountId());
-				transaction.setBankAccount(bankAccount);
-			}
-			result.addAll(transactions);			
-		}
-		return result;
-	}
+	
 	
 	
 	

@@ -11,7 +11,7 @@ public interface IRelationshipRepository {
 	
 	public List<Integer> getConnectionsIds(int accountId);
 	
-	public List<Integer> getAllRelationshipsIds(int accountId);
+	public List<Integer> getRelationshipsIds(int accountId);
 
 	public int getConnectionId(int relationshipId);
 	
