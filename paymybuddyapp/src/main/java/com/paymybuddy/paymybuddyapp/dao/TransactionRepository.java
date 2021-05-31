@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import com.paymybuddy.paymybuddyapp.config.DBConfig;
-import com.paymybuddy.paymybuddyapp.model.Account;
+import com.paymybuddy.paymybuddyapp.model.Customer;
 import com.paymybuddy.paymybuddyapp.model.Transaction;
 
 @Repository
@@ -20,6 +20,8 @@ public class TransactionRepository implements ITransactionRepository {
 
 	public DBConfig dbConfig = new DBConfig();
 
+	
+	
 	public Transaction addTransaction(Transaction transaction, int relationshipId, int bankAccountId) {
 		Connection con = null;
 		PreparedStatement ps = null;
@@ -42,6 +44,29 @@ public class TransactionRepository implements ITransactionRepository {
 		}
 		return null;
 	}
+	
+	public Transaction addTransaction(Transaction transaction) {
+		Connection con = null;
+		PreparedStatement ps = null;
+		try {
+			con = dbConfig.getConnection();
+			ps = con.prepareStatement(
+					"INSERT INTO TRANSACTION(AMOUNT, DESCRIPTION, DATE, relationship_ID) values(?,?,?,?)");
+			// AMOUNT, DESCRIPTION, relationship_ID, bankaccount_ID
+			ps.setBigDecimal(1, transaction.getAmount());
+			ps.setString(2, transaction.getDescription());
+			ps.setDate(3, transaction.getDate());
+			ps.setInt(4, transaction.getRelationshipId());
+			ps.execute();
+			return transaction;
+		} catch (Exception ex) {
+			logger.error("Error saving new transaction", ex);
+		} finally {
+			dbConfig.closeConnection(con);
+			dbConfig.closePreparedStatement(ps);
+		}
+		return null;
+	}
 
 	public List<Transaction> getTransactions(int relationshipId) {
 
@@ -52,7 +77,7 @@ public class TransactionRepository implements ITransactionRepository {
 		try {
 			con = dbConfig.getConnection();
 
-			ps = con.prepareStatement("SELECT ID, AMOUNT, DESCRIPTION, bankaccount_ID FROM TRANSACTION"
+			ps = con.prepareStatement("SELECT ID, AMOUNT, DESCRIPTION FROM TRANSACTION"
 					+ " WHERE relationship_ID=?");
 			ps.setInt(1, relationshipId);
 			rs = ps.executeQuery();
@@ -62,7 +87,7 @@ public class TransactionRepository implements ITransactionRepository {
 				transaction.setId(rs.getInt(1));
 				transaction.setAmount(rs.getBigDecimal(2));
 				transaction.setDescription(rs.getString(3));
-				transaction.setBankAccountId(rs.getInt(4));
+				transaction.setRelationshipId(relationshipId);
 				transactions.add(transaction);
 
 			}

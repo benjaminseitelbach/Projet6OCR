@@ -11,7 +11,7 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Repository;
 
 import com.paymybuddy.paymybuddyapp.config.DBConfig;
-import com.paymybuddy.paymybuddyapp.model.Account;
+import com.paymybuddy.paymybuddyapp.model.Customer;
 import com.paymybuddy.paymybuddyapp.model.Relationship;
 
 @Repository
@@ -21,16 +21,47 @@ public class RelationshipRepository implements IRelationshipRepository {
 	
 	public DBConfig dbConfig = new DBConfig();
 	
-	public List<Integer> getConnectionsIds(int accountId) {
+	
+	
+	public int getId(int customerId, int connectionId) {
+		Connection con = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            con = dbConfig.getConnection();
+            ps = con.prepareStatement("SELECT ID FROM RELATIONSHIP WHERE customer_ID=? AND connection_ID=?");
+            //customer_ID, connection_ID
+            ps.setInt(1, customerId);
+            ps.setInt(2, connectionId);
+
+            rs = ps.executeQuery();
+            
+            if(rs.next()) {
+            	return rs.getInt(1);
+            }
+
+        }catch (Exception ex){
+            logger.error("Error getting connections IDs from account ID",ex);
+        }finally {
+            dbConfig.closeConnection(con);
+            dbConfig.closePreparedStatement(ps);
+            dbConfig.closeResultSet(rs);
+        }
+        return 0;
+		
+	}
+	
+	public List<Integer> getConnectionsIds(int customerId) {
 		Connection con = null;
         PreparedStatement ps = null;
         ResultSet rs = null;
         List<Integer> connectionsIds = new ArrayList<>();
         try {
             con = dbConfig.getConnection();
-            ps = con.prepareStatement("SELECT connection_ID FROM RELATIONSHIP WHERE account_ID=?");
-            //account_ID, relationship_ID
-            ps.setInt(1, accountId);
+            ps = con.prepareStatement("SELECT connection_ID FROM RELATIONSHIP WHERE customer_ID=?");
+            //customer_ID, relationship_ID
+            ps.setInt(1, customerId);
 
             rs = ps.executeQuery();
             
@@ -54,7 +85,7 @@ public class RelationshipRepository implements IRelationshipRepository {
         PreparedStatement ps = null;
         try {
             con = dbConfig.getConnection();
-            ps = con.prepareStatement("insert into relationship(account_ID, connection_ID) values(?,?)");
+            ps = con.prepareStatement("insert into relationship(customer_ID, connection_ID) values(?,?)");
             //account_ID, relationship_ID
             ps.setInt(1, relationship.getAccountId());
             ps.setInt(2, relationship.getConnectionId());
@@ -76,7 +107,7 @@ public class RelationshipRepository implements IRelationshipRepository {
         Relationship relationship = new Relationship();
         try {
             con = dbConfig.getConnection();
-            ps = con.prepareStatement("insert into relationship(account_ID, connection_ID) values(?,?)");
+            ps = con.prepareStatement("insert into relationship(customer_ID, connection_ID) values(?,?)");
             //account_ID, relationship_ID
             ps.setInt(1, accountId);
             ps.setInt(2, connectionId);
@@ -130,7 +161,7 @@ public class RelationshipRepository implements IRelationshipRepository {
         try {
             con = dbConfig.getConnection();
             ps = con.prepareStatement("SELECT ID FROM RELATIONSHIP "
-            		+ "WHERE account_ID=?");
+            		+ "WHERE customer_ID=?");
             //account_ID
             ps.setInt(1, accountId);
 
@@ -158,7 +189,7 @@ public class RelationshipRepository implements IRelationshipRepository {
         List<Relationship> relationships = new ArrayList<>();
         try {
             con = dbConfig.getConnection();
-            ps = con.prepareStatement("SELECT ID, account_ID, connection_ID FROM RELATIONSHIP WHERE account_ID=?");
+            ps = con.prepareStatement("SELECT ID, customer_ID, connection_ID FROM RELATIONSHIP WHERE customer_ID=?");
             //account_ID
             ps.setInt(1, accountId);
 
@@ -168,7 +199,7 @@ public class RelationshipRepository implements IRelationshipRepository {
             	Relationship relationship = new Relationship();
             	relationship.setId(rs.getInt(1));
             	relationship.setAccountId(rs.getInt(2));
-            	relationship.setRelationshipId(rs.getInt(3));
+            	relationship.setConnectionId(rs.getInt(3));
             	relationships.add(relationship);
             }
 
@@ -189,7 +220,7 @@ public class RelationshipRepository implements IRelationshipRepository {
 
         try {
             con = dbConfig.getConnection();
-            ps = con.prepareStatement("SELECT ID FROM RELATIONSHIP WHERE account_ID=? AND connection_ID=?");
+            ps = con.prepareStatement("SELECT ID FROM RELATIONSHIP WHERE customer_ID=? AND connection_ID=?");
             //account_ID, relationship_ID
             ps.setInt(1, relationship.getAccountId());
             ps.setInt(2, relationship.getConnectionId());

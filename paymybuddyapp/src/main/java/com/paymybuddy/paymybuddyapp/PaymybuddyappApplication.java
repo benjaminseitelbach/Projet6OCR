@@ -3,12 +3,12 @@ package com.paymybuddy.paymybuddyapp;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import com.paymybuddy.paymybuddyapp.dao.AccountRepository;
-import com.paymybuddy.paymybuddyapp.model.Account;
+import com.paymybuddy.paymybuddyapp.dao.CustomerRepository;
+import com.paymybuddy.paymybuddyapp.model.Customer;
 import com.paymybuddy.paymybuddyapp.model.BankAccount;
 import com.paymybuddy.paymybuddyapp.model.Relationship;
 import com.paymybuddy.paymybuddyapp.model.Transaction;
-import com.paymybuddy.paymybuddyapp.service.AccountService;
+import com.paymybuddy.paymybuddyapp.service.CustomerService;
 
 @SpringBootApplication
 public class PaymybuddyappApplication {

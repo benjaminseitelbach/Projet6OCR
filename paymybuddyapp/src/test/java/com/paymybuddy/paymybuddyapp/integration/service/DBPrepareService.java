@@ -12,7 +12,7 @@ import org.json.JSONObject;
 
 import com.paymybuddy.paymybuddyapp.config.DBConfig;
 import com.paymybuddy.paymybuddyapp.integration.config.DBTestConfig;
-import com.paymybuddy.paymybuddyapp.model.Account;
+import com.paymybuddy.paymybuddyapp.model.Customer;
 
 public class DBPrepareService {
 
@@ -48,10 +48,10 @@ public class DBPrepareService {
         }
     }
     
-    public Account findAccount(String email, String password) {
+    public Customer findAccount(String email, String password) {
     	Connection connection = null;
 
-    	Account account = new Account();
+    	Customer account = new Customer();
     	
         try {
         	connection = dataBaseTestConfig.getConnection();

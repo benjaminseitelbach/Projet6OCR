@@ -1,15 +1,16 @@
 package com.paymybuddy.paymybuddyapp.model;
 
 import java.math.BigDecimal;
+import java.sql.Date;
 
 public class Transaction {
 	private int id;	
 	private BigDecimal amount;
 	private String description;
-	private Relationship relationship;
-	private int bankAccountId;
-	private BankAccount bankAccount;
-	private Account connection;
+	private Date date;
+	private Customer sender;
+	private Customer receiver;
+	private int relationshipId;	
 		
 	public int getId() {
 		return id;
@@ -29,36 +30,37 @@ public class Transaction {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	public Relationship getRelationship() {
-		return relationship;
+	public Date getDate() {
+		return date;
 	}
-	public void setRelationship(Relationship relationship) {
-		this.relationship = relationship;
+	public void setDate(Date date) {
+		this.date = date;
 	}
-	public int getBankAccountId() {
-		return bankAccountId;
+	public Customer getSender() {
+		return sender;
 	}
-	public void setBankAccountId(int bankAccountId) {
-		this.bankAccountId = bankAccountId;
+	public void setSender(Customer sender) {
+		this.sender = sender;
 	}
-	public BankAccount getBankAccount() {
-		return bankAccount;
+	public Customer getReceiver() {
+		return receiver;
 	}
-	public void setBankAccount(BankAccount bankAccount) {
-		this.bankAccount = bankAccount;
+	public void setReceiver(Customer receiver) {
+		this.receiver = receiver;
 	}
-	public Account getConnection() {
-		return connection;
+	public int getRelationshipId() {
+		return relationshipId;
 	}
-	public void setConnection(Account connection) {
-		this.connection = connection;
+	public void setRelationshipId(int relationshipId) {
+		this.relationshipId = relationshipId;
 	}
-	
 	@Override
 	public String toString() {
-		return "Amount: " + amount + ", description: " + description + ", Relationship id: " + relationship.getRelationshipId()
-			+ ", Bank Account: " + bankAccount.toString();
+		return "Transaction [id=" + id + ", amount=" + amount + ", description=" + description + ", date=" + date
+				+ ", sender=" + sender + ", receiver=" + receiver + ", relationshipId=" + relationshipId + "]";
 	}
+	
+
 	
 	
 }

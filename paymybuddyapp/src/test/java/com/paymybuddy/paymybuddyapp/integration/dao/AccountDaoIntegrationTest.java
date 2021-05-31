@@ -7,15 +7,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.paymybuddy.paymybuddyapp.dao.IAccountRepository;
+import com.paymybuddy.paymybuddyapp.dao.ICustomerRepository;
 import com.paymybuddy.paymybuddyapp.integration.service.DBPrepareService;
-import com.paymybuddy.paymybuddyapp.model.Account;
+import com.paymybuddy.paymybuddyapp.model.Customer;
 
 @SpringBootTest
 public class AccountDaoIntegrationTest {
 
 	@Autowired
-	private IAccountRepository accountDao;
+	private ICustomerRepository accountDao;
 	
 	private static DBPrepareService dbPrepareService;
 	
@@ -36,7 +36,7 @@ public class AccountDaoIntegrationTest {
 	
 	@Test
 	public void saveAccountIT() {
-		Account account = new Account();
+		Customer account = new Customer();
 		account.setEmail(emailTest);
 		account.setPassword(passwordTest);
 		account.setFirstName("FirstNameTest");
@@ -44,7 +44,7 @@ public class AccountDaoIntegrationTest {
 		
 		accountDao.addAccount(account);
 		
-		Account accountFound = dbPrepareService.findAccount(emailTest, passwordTest);
+		Customer accountFound = dbPrepareService.findAccount(emailTest, passwordTest);
 		
 		assertEquals(account.getEmail(), accountFound.getEmail());
 		assertEquals(account.getPassword(), accountFound.getPassword());

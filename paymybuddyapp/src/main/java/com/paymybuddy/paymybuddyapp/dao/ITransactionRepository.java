@@ -6,7 +6,7 @@ import com.paymybuddy.paymybuddyapp.model.Transaction;
 
 public interface ITransactionRepository {
 	
-	public Transaction addTransaction(Transaction transaction, int relationshipId, int bankAccountId);
+	public Transaction addTransaction(Transaction transaction);
 	
 	public List<Transaction> getTransactions(int relationshipId);
 }
