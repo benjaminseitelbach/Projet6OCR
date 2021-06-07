@@ -2,36 +2,70 @@ package com.paymybuddy.paymybuddyapp.model;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+
+@Entity
+@Table(name = "customer")
 public class Customer {
-	int id;
-	private String username;
-	private String password;
-	private String email;	
-	private String firstName;
-	private String lastName;
-	private BigDecimal amount;
-	private List<Customer> connections;
-	private List<BankAccount> bankAccounts;
-	private List<Transaction> transactions;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "ID")
+	private int id;
 	
-	public Customer() {
-		connections = new ArrayList<>();
-		transactions = new ArrayList<>();
-	}
+	@Column(name = "EMAIL")
+	private String email;
+	
+	@Column(name = "PASSWORD")
+	private String password;
+	
+	@Column(name = "FIRSTNAME")
+	private String firstName;
+	
+	@Column(name = "LASTNAME")
+	private String lastName;
+	
+	@Column(name = "AMOUNT")
+	private BigDecimal amount;
+	
+	@ManyToMany(
+			fetch = FetchType.EAGER
+			)
+	
+	@JoinTable(
+			name = "relationship",
+			joinColumns = @JoinColumn(name = "customer_ID"),
+			inverseJoinColumns = @JoinColumn(name = "connection_ID")
+			)
+	private Set<Customer> connections = new HashSet<>();
+	
+	@OneToMany(
+			cascade = CascadeType.MERGE,
+			orphanRemoval = true,
+			fetch = FetchType.EAGER
+			)
+	@JoinColumn(name = "sender_ID")
+	private List<Transaction> transactions = new ArrayList<>();
 	
 	public int getId() {
 		return id;
 	}
 	public void setId(int id) {
 		this.id = id;
-	}
-	public String getUsername() {
-		return username;
-	}
-	public void setUsername(String username) {
-		this.username = username;
 	}
 	public String getPassword() {
 		return password;
@@ -63,34 +97,16 @@ public class Customer {
 	public void setAmount(BigDecimal amount) {
 		this.amount = amount;
 	}
-	public List<Customer> getConnections() {
+	public Set<Customer> getConnections() {
 		return connections;
 	}
-	public void setConnections(List<Customer> connections) {
+	public void setConnections(Set<Customer> connections) {
 		this.connections = connections;
 	}
-	public List<BankAccount> getBankAccounts() {
-		return bankAccounts;
-	}
-	public void setBankAccounts(List<BankAccount> bankAccounts) {
-		this.bankAccounts = bankAccounts;
-	}
-	public void addConnection(Customer connection) {
-		this.connections.add(connection);
-	}
-	public List<Transaction> getTransactions() {
-		return transactions;
-	}
-	public void setTransactions(List<Transaction> transactions) {
-		this.transactions = transactions;
-	}
-	public void addTransaction(Transaction transaction) {
-		transactions.add(transaction);
-	}
-
 	@Override
 	public String toString() {
-		return "Email: " + email + "\nPassword: " + password + "\nFirst name: " + firstName + "\nLast name: " + lastName;
+		return "Customer [id=" + id + ", email=" + email + ", password=" + password + ", firstName=" + firstName
+				+ ", lastName=" + lastName + ", amount=" + amount + ", connections=" + connections + "]";
 	}
 	
 }
