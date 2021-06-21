@@ -2,11 +2,13 @@ package com.paymybuddy.paymybuddyapp;
 
 import java.util.List;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import com.paymybuddy.paymybuddyapp.model.Customer;
 import com.paymybuddy.paymybuddyapp.model.Transaction;
 import com.paymybuddy.paymybuddyapp.service.IAuthenticationService;
 import com.paymybuddy.paymybuddyapp.service.ITransactionService;
@@ -27,12 +29,6 @@ public class PaymybuddyappApplication implements CommandLineRunner {
 	
 	@Override
 	public void run(String... args) throws Exception {
-		/*
-		List<Transaction> transactions = transactionService.getAllTransactions();
-		for(Transaction transaction : transactions) {
-			System.out.println(transaction.toString());
-		}
-		*/
 		
 	}
 

@@ -19,28 +19,34 @@ import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import javax.validation.constraints.NotBlank;
+
 @Entity
 @Table(name = "customer")
 public class Customer {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID")
+	@Column(name = "customer_id")
 	private int id;
 	
-	@Column(name = "EMAIL")
+	@Column(name = "email")
+	@NotBlank(message = "Email is mandatory")
 	private String email;
 	
-	@Column(name = "PASSWORD")
+	@Column(name = "password")
+	@NotBlank(message = "Password is mandatory")
 	private String password;
 	
-	@Column(name = "FIRSTNAME")
+	@Column(name = "first_name")
+	@NotBlank(message = "First name is mandatory")
 	private String firstName;
 	
-	@Column(name = "LASTNAME")
+	@Column(name = "last_name")
+	@NotBlank(message = "Last name is mandatory")
 	private String lastName;
 	
-	@Column(name = "AMOUNT")
-	private BigDecimal amount;
+	@Column(name = "amount")
+	private double amount;
 	
 	@ManyToMany(
 			fetch = FetchType.EAGER
@@ -48,18 +54,10 @@ public class Customer {
 	
 	@JoinTable(
 			name = "relationship",
-			joinColumns = @JoinColumn(name = "customer_ID"),
-			inverseJoinColumns = @JoinColumn(name = "connection_ID")
+			joinColumns = @JoinColumn(name = "customer_id"),
+			inverseJoinColumns = @JoinColumn(name = "connection_id")
 			)
 	private Set<Customer> connections = new HashSet<>();
-	
-	@OneToMany(
-			cascade = CascadeType.MERGE,
-			orphanRemoval = true,
-			fetch = FetchType.EAGER
-			)
-	@JoinColumn(name = "sender_ID")
-	private List<Transaction> transactions = new ArrayList<>();
 	
 	public int getId() {
 		return id;
@@ -91,10 +89,10 @@ public class Customer {
 	public void setLastName(String lastName) {
 		this.lastName = lastName;
 	}
-	public BigDecimal getAmount() {
+	public double getAmount() {
 		return amount;
 	}
-	public void setAmount(BigDecimal amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 	public Set<Customer> getConnections() {
@@ -103,10 +101,12 @@ public class Customer {
 	public void setConnections(Set<Customer> connections) {
 		this.connections = connections;
 	}
+	
 	@Override
 	public String toString() {
 		return "Customer [id=" + id + ", email=" + email + ", password=" + password + ", firstName=" + firstName
 				+ ", lastName=" + lastName + ", amount=" + amount + ", connections=" + connections + "]";
 	}
+
 	
 }

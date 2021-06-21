@@ -32,36 +32,37 @@ public class PayMyBuddyController {
 	    return "signIn";
 	}
 	
-	@GetMapping("/list")
-	public void list() {
-	    List<Customer> customers = authenticationService.getAllCustomers();
-		for(Customer customer : customers) {
-			System.out.println(customer.toString());
-		}
-	}
-	
 	@PostMapping("/signIn")
 	public String transfer(@RequestParam(name="email") String email, @RequestParam(name="password") String password,
 			Model model) {
 		currentCustomer = authenticationService.authenticate(email, password);
 		
-		model.addAttribute("connections", currentCustomer.getConnections());
-		
+		if(currentCustomer != null) {
+			model.addAttribute("connections", currentCustomer.getConnections());
+			
 
-		model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
-	    
-	    
-	    return "transfer";
+			model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
+		    
+		    
+		    return "transfer";
+		} else {
+			model.addAttribute("signInMessage", "Wrong email or password");
+			
+			return "signIn";
+		}
+		
 	}
 	
 	
 	@PostMapping("/sendMoney") 
 	public String sendMoney(@RequestParam(name="connection") int connectionId,
-			@RequestParam(name="money") BigDecimal money, Model model) {
+			@RequestParam(name="amount") double amount, Model model) {
 
-		boolean result = transactionService.sendMoney(currentCustomer, connectionId, money);
+		boolean result = transactionService.sendMoney(currentCustomer, connectionId, amount);
 		if(result) {
-			
+			model.addAttribute("message", "Transaction done");
+		} else {
+			model.addAttribute("message", "Transaction failed");
 		}
 		
 		model.addAttribute("connections", currentCustomer.getConnections());

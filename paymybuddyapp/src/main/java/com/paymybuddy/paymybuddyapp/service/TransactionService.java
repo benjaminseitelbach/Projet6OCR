@@ -1,9 +1,6 @@
 package com.paymybuddy.paymybuddyapp.service;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.sql.Date;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,7 +10,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.paymybuddy.paymybuddyapp.dao.CustomerRepository;
 import com.paymybuddy.paymybuddyapp.dao.TransactionRepository;
 import com.paymybuddy.paymybuddyapp.model.Customer;
-import com.paymybuddy.paymybuddyapp.model.BankAccount;
 import com.paymybuddy.paymybuddyapp.model.Transaction;
 
 @Service
@@ -27,32 +23,32 @@ public class TransactionService implements ITransactionService {
 	
 	
 	@Transactional
-	public boolean sendMoney(Customer customer, int connectionId, BigDecimal amount) {
+	public boolean sendMoney(Customer sender, int receiverId, double amount) {
 		//int customerId = customer.getId();
 		
-		BigDecimal amountWithTax = amount.add(new BigDecimal(0.005).multiply(amount));
-		BigDecimal customerAmount = customer.getAmount();
+		double amountWithTax = amount + 0.005 * amount;
+		double senderAmount = sender.getAmount();
 		
-		if(customerAmount.compareTo(amountWithTax) == 1) {
+		if(senderAmount >= amountWithTax) {
 			
-			BigDecimal customerNewAmount = customerAmount.subtract(amountWithTax);
-			System.out.println("customer new amount: " + customerNewAmount.floatValue());
-			customer.setAmount(customerNewAmount);
-			customerRepository.save(customer);
+			double senderNewAmount = senderAmount - amountWithTax;
+			//System.out.println("customer new amount: " + customerNewAmount.floatValue());
+			sender.setAmount(senderNewAmount);
+			customerRepository.save(sender);
 			
-			Customer connection = customerRepository.findById(connectionId).get();
-			BigDecimal connectionNewAmount = connection.getAmount().add(amount);
-			connection.setAmount(connectionNewAmount);
-			customerRepository.save(connection);
+			Customer receiver = customerRepository.findById(receiverId).get();
+			double receiverNewAmount = receiver.getAmount() + amount;
+			receiver.setAmount(receiverNewAmount);
+			customerRepository.save(receiver);
 			
 			Transaction transaction = new Transaction();
 			transaction.setAmount(amount);
-			//Date date = new Date();
-			Date date = new Date(Calendar.getInstance().getTime().getTime());
+			Date date = new Date();
+			//Date date = new Date(Calendar.getInstance().getTime().getTime());
 			transaction.setDescription("Transaction done on " + date);
 			transaction.setDate(date);
-			transaction.setSender(customer);
-			transaction.setReceiver(connection);
+			transaction.setSender(sender);
+			transaction.setReceiver(receiver);
 			//transaction.setSender(customer);
 			//transaction.setReceiver(connection);
 			transactionRepository.save(transaction);
@@ -62,14 +58,9 @@ public class TransactionService implements ITransactionService {
 		return false;
 				
 	}
-	
-	
+		
 	public List<Transaction> getTransactions(Customer sender) {
 		return transactionRepository.findBySender(sender);
-	}
-	
-	public List<Transaction> getAllTransactions() {
-		return transactionRepository.findAll();
 	}
 	
 

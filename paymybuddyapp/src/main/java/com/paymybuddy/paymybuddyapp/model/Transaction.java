@@ -1,12 +1,10 @@
 package com.paymybuddy.paymybuddyapp.model;
 
-import java.math.BigDecimal;
-import java.sql.Date;
+import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,28 +17,28 @@ import javax.persistence.Table;
 public class Transaction {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "ID")
+	@Column(name = "transaction_id")
 	private int id;	
 	
-	@Column(name = "AMOUNT")
-	private BigDecimal amount;
+	@Column(name = "amount")
+	private double amount;
 	
-	@Column(name = "DESCRIPTION")
+	@Column(name = "description")
 	private String description;
 	
-	@Column(name = "DATE")
+	@Column(name = "date")
 	private Date date;
 	
 	@ManyToOne(
 			cascade = CascadeType.MERGE
 			)
-	@JoinColumn(name = "sender_ID", referencedColumnName = "ID")
+	@JoinColumn(name = "sender_id")
 	private Customer sender;
 	
 	@ManyToOne(
 			cascade = CascadeType.MERGE
 			)
-	@JoinColumn(name = "receiver_ID", referencedColumnName = "ID")
+	@JoinColumn(name = "receiver_id")
 	private Customer receiver;
 			
 	public int getId() {
@@ -49,10 +47,10 @@ public class Transaction {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public BigDecimal getAmount() {
+	public double getAmount() {
 		return amount;
 	}
-	public void setAmount(BigDecimal amount) {
+	public void setAmount(double amount) {
 		this.amount = amount;
 	}
 	public String getDescription() {
