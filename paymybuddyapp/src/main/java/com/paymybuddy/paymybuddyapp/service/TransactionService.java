@@ -21,10 +21,17 @@ public class TransactionService implements ITransactionService {
 	@Autowired
 	private TransactionRepository transactionRepository;
 	
-	
+	/**
+     * Send money: take amount plus tax from sender and give amount to receiver
+     *
+     * @param sender
+     * @param receiverId
+     * @param amount
+     *
+     * @return true if transaction OK and false if not
+     */	
 	@Transactional
 	public boolean sendMoney(Customer sender, int receiverId, double amount) {
-		//int customerId = customer.getId();
 		
 		double amountWithTax = amount + 0.005 * amount;
 		double senderAmount = sender.getAmount();
@@ -32,7 +39,6 @@ public class TransactionService implements ITransactionService {
 		if(senderAmount >= amountWithTax) {
 			
 			double senderNewAmount = senderAmount - amountWithTax;
-			//System.out.println("customer new amount: " + customerNewAmount.floatValue());
 			sender.setAmount(senderNewAmount);
 			customerRepository.save(sender);
 			
@@ -44,23 +50,26 @@ public class TransactionService implements ITransactionService {
 			Transaction transaction = new Transaction();
 			transaction.setAmount(amount);
 			Date date = new Date();
-			//Date date = new Date(Calendar.getInstance().getTime().getTime());
 			transaction.setDescription("Transaction done on " + date);
 			transaction.setDate(date);
 			transaction.setSender(sender);
 			transaction.setReceiver(receiver);
-			//transaction.setSender(customer);
-			//transaction.setReceiver(connection);
 			transactionRepository.save(transaction);
-			//customer.addTransaction(transaction);
 			return true;
 		}
 		return false;
 				
 	}
-		
-	public List<Transaction> getTransactions(Customer sender) {
-		return transactionRepository.findBySender(sender);
+	
+	/**
+     * Get all transactions from a customer
+     *
+     * @param customer
+     *
+     * @return the list of transactions
+     */	
+	public List<Transaction> getTransactions(Customer customer) {
+		return transactionRepository.findBySender(customer);
 	}
 	
 

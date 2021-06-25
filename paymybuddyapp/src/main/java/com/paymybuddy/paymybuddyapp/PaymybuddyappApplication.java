@@ -29,7 +29,7 @@ public class PaymybuddyappApplication implements CommandLineRunner {
 	
 	@Override
 	public void run(String... args) throws Exception {
-		
+
 	}
 
 }

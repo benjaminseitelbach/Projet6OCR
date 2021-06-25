@@ -1,9 +1,6 @@
 package com.paymybuddy.paymybuddyapp.model;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -101,12 +98,12 @@ public class Customer {
 	public void setConnections(Set<Customer> connections) {
 		this.connections = connections;
 	}
-	
 	@Override
 	public String toString() {
 		return "Customer [id=" + id + ", email=" + email + ", password=" + password + ", firstName=" + firstName
 				+ ", lastName=" + lastName + ", amount=" + amount + ", connections=" + connections + "]";
 	}
 
+	
 	
 }

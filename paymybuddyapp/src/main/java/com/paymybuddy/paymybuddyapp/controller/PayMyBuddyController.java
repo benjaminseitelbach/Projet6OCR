@@ -1,8 +1,5 @@
 package com.paymybuddy.paymybuddyapp.controller;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,10 +24,26 @@ public class PayMyBuddyController {
 	
 	private Customer currentCustomer;
 	
+	/**
+     * Returns sign in page
+     *
+     * @return sign in page
+     */	
 	@GetMapping("/")
 	public String home() {
 	    return "signIn";
 	}
+	
+	/**
+     * Sign in: if email and password corresponds, returns transfer page and if not, 
+     * print message "Wrong email or password" 
+     *
+     * @param email
+     * @param password
+     * @param model
+     *
+     * @return transfer page or sign in page with message "Wrong email or password"
+     */	
 	
 	@PostMapping("/signIn")
 	public String transfer(@RequestParam(name="email") String email, @RequestParam(name="password") String password,
@@ -53,7 +66,15 @@ public class PayMyBuddyController {
 		
 	}
 	
-	
+	/**
+     * Send money 
+     *
+     * @param connection ID
+     * @param amount
+     * @param model
+     *
+     * @return transfer page
+     */	
 	@PostMapping("/sendMoney") 
 	public String sendMoney(@RequestParam(name="connection") int connectionId,
 			@RequestParam(name="amount") double amount, Model model) {
