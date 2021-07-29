@@ -35,6 +35,41 @@ public class PayMyBuddyController {
 	}
 	
 	/**
+     * Returns sign up page
+     *
+     * @return sign up page
+     */	
+	@GetMapping("/signUp")
+	public String accessSignUpPage() {
+		return "signUp";
+	}
+	
+	@PostMapping("/signUp")
+	public String accessTransferPageBySignUp(@RequestParam(name="email") String email, 
+			@RequestParam(name="password") String password, @RequestParam(name="firstName") String firstName,
+			@RequestParam(name="lastName") String lastName, Model model) {
+		currentCustomer = new Customer();
+		currentCustomer.setEmail(email);
+		currentCustomer.setPassword(password);
+		currentCustomer.setFirstName(firstName);
+		currentCustomer.setLastName(lastName);
+		authenticationService.addCustomer(currentCustomer);
+		model.addAttribute("connections", currentCustomer.getConnections());
+		
+		model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
+		return "transfer";		
+	}
+	
+	@PostMapping("/addConnection")
+	public String addConnection(@RequestParam(name="connectionEmail") String connectionEmail, Model model) {
+		currentCustomer = authenticationService.addConnection(currentCustomer, connectionEmail);
+		model.addAttribute("connections", currentCustomer.getConnections());
+		
+		model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
+		return "transfer";
+	}
+	
+	/**
      * Sign in: if email and password corresponds, returns transfer page and if not, 
      * print message "Wrong email or password" 
      *
@@ -43,8 +78,7 @@ public class PayMyBuddyController {
      * @param model
      *
      * @return transfer page or sign in page with message "Wrong email or password"
-     */	
-	
+     */		
 	@PostMapping("/signIn")
 	public String transfer(@RequestParam(name="email") String email, @RequestParam(name="password") String password,
 			Model model) {
@@ -53,7 +87,6 @@ public class PayMyBuddyController {
 		if(currentCustomer != null) {
 			model.addAttribute("connections", currentCustomer.getConnections());
 			
-
 			model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
 		    
 		    
