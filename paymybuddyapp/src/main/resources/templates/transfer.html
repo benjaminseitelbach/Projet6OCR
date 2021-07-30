@@ -32,16 +32,17 @@
 							<a class="nav-link" href="#">Home</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="@{/transfer}">Transfer</a>
+							<a class="nav-link" th:href="@{/transfer}">Transfer</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#">Profile</a>
+							<a class="nav-link" th:href="@{/profile}">Profile</a>
 						</li>
 						<li class="nav-item">
 							<a class="nav-link" href="#">Contact</a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="#">Log Off</a>
+							
+							<a class="nav-link" th:href="@{/signIn}">Log Off</a>
 						</li>
 					</ul>
 				</div>
@@ -55,7 +56,11 @@
 				<li class="breadcrumb-item active" aria-current="page">Transfer</li>
 			</ol>
 		</nav>
+		<h5>Available amount:</h5>
+		<span th:text="${customer.amount}"></span>
+		
 		<div class="container">
+			
 			<div class="row">
 				<div class="col">
 					<h4 class="h4"> Send Money </h4>

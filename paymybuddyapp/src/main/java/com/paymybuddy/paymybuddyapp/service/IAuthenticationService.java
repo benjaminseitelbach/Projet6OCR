@@ -10,4 +10,8 @@ public interface IAuthenticationService {
 	
 	public Customer addConnection(Customer customer, String connectionEmail);
 	
+	public Customer sendToPayMyBuddy(Customer customer, double amount);
+	
+	public Customer recoverToBankAccount(Customer customer, double amount);
+	
 }

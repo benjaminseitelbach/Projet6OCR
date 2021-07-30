@@ -2,11 +2,14 @@ package com.paymybuddy.paymybuddyapp.service;
 
 import java.util.Set;
 
+import javax.transaction.Transactional;
+
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.paymybuddy.paymybuddyapp.dao.CustomerRepository;
+import com.paymybuddy.paymybuddyapp.model.BankAccount;
 import com.paymybuddy.paymybuddyapp.model.Customer;
 
 @Service
@@ -49,6 +52,39 @@ public class AuthenticationService implements IAuthenticationService {
 		return null;
 	}
 	
+	@Transactional
+	public Customer sendToPayMyBuddy(Customer customer, double amount) {
+		BankAccount bankAccount = customer.getBankAccount();
+		double bankAccountAmount = bankAccount.getAmount();
+		//TODO CAN BANK ACCOUNT AMOUNT BE < 0 ?
+		if(bankAccountAmount - amount >= 0) {
+			double bankAccountNewAmount = bankAccountAmount - amount;
+			bankAccount.setAmount(bankAccountNewAmount);
+			
+			double payMyBuddyNewAmount = customer.getAmount() + amount;
+			customer.setAmount(payMyBuddyNewAmount);
+			customerRepository.save(customer);
+		}
+		return customer;
+	}
 	
+	@Transactional
+	public Customer recoverToBankAccount(Customer customer, double amount) {
+		double payMyBuddyAmount = customer.getAmount();
+
+		if(payMyBuddyAmount - amount >= 0) {
+			double payMyBuddyNewAmount = payMyBuddyAmount - amount;
+			customer.setAmount(payMyBuddyNewAmount);
+			
+			BankAccount bankAccount = customer.getBankAccount();
+			double bankAccountNewAmount = bankAccount.getAmount() + amount;
+			bankAccount.setAmount(bankAccountNewAmount);
+			
+			customerRepository.save(customer);
+		} else {
+			//TODO
+		}
+		return customer;
+	}
 	
 }

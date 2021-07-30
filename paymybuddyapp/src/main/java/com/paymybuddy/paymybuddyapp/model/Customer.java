@@ -14,6 +14,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import javax.validation.constraints.NotBlank;
@@ -56,6 +58,10 @@ public class Customer {
 			)
 	private Set<Customer> connections = new HashSet<>();
 	
+	@OneToOne(mappedBy = "customer", cascade = CascadeType.ALL)
+	@PrimaryKeyJoinColumn
+	private BankAccount bankAccount;
+	
 	public int getId() {
 		return id;
 	}
@@ -97,12 +103,20 @@ public class Customer {
 	}
 	public void setConnections(Set<Customer> connections) {
 		this.connections = connections;
+	}	
+	public BankAccount getBankAccount() {
+		return bankAccount;
+	}
+	public void setBankAccount(BankAccount bankAccount) {
+		this.bankAccount = bankAccount;
 	}
 	@Override
 	public String toString() {
 		return "Customer [id=" + id + ", email=" + email + ", password=" + password + ", firstName=" + firstName
-				+ ", lastName=" + lastName + ", amount=" + amount + ", connections=" + connections + "]";
+				+ ", lastName=" + lastName + ", amount=" + amount + ", connections=" + connections + ", bankAccount="
+				+ bankAccount + "]";
 	}
+	
 
 	
 	

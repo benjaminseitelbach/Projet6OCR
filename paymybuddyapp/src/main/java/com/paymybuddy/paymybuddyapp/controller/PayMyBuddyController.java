@@ -35,6 +35,16 @@ public class PayMyBuddyController {
 	}
 	
 	/**
+     * Returns sign in page
+     *
+     * @return sign in page
+     */	
+	@GetMapping("/signIn")
+	public String accessSignInPage() {
+	    return "signIn";
+	}
+	
+	/**
      * Returns sign up page
      *
      * @return sign up page
@@ -85,6 +95,8 @@ public class PayMyBuddyController {
 		currentCustomer = authenticationService.authenticate(email, password);
 		
 		if(currentCustomer != null) {
+			model.addAttribute("customer", currentCustomer);
+			
 			model.addAttribute("connections", currentCustomer.getConnections());
 			
 			model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
@@ -118,12 +130,43 @@ public class PayMyBuddyController {
 		} else {
 			model.addAttribute("message", "Transaction failed");
 		}
-		
+		model.addAttribute("customer", currentCustomer);
 		model.addAttribute("connections", currentCustomer.getConnections());
 		model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
 		return "transfer";
 	}
 	
+	@GetMapping("/profile")
+	public String accessProfilePage(Model model) {
+		model.addAttribute("customer", currentCustomer);
+		return "profile";
+	}
+	
+	@PostMapping("/addToPayMyBuddy")
+	public String addToPayMyBuddy(@RequestParam(name="amountAddedToPayMyBuddy") double amount, Model model) {
+		currentCustomer = authenticationService.sendToPayMyBuddy(currentCustomer, amount);
+		
+		model.addAttribute("customer", currentCustomer);
+		return "profile";
+		
+	}
+	
+	@PostMapping("/recoverToBankAccount")
+	public String recoverToBankAccount(@RequestParam(name="amountRecoveredToBankAccount") double amount, Model model) {
+		currentCustomer = authenticationService.recoverToBankAccount(currentCustomer, amount);
+		
+		model.addAttribute("customer", currentCustomer);
+		return "profile";
+		
+	}
+	
+	@GetMapping("/transfer")
+	public String accessTransferPage(Model model) {
+		model.addAttribute("customer", currentCustomer);
+		model.addAttribute("connections", currentCustomer.getConnections());
+		model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
+		return "transfer";
+	}
 	
 	
 	
