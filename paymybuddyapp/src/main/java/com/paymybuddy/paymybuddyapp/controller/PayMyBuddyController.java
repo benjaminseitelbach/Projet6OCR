@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.paymybuddy.paymybuddyapp.model.Customer;
-import com.paymybuddy.paymybuddyapp.service.IAuthenticationService;
+import com.paymybuddy.paymybuddyapp.service.ICustomerService;
 
 
 import com.paymybuddy.paymybuddyapp.service.ITransactionService;
@@ -17,7 +17,7 @@ import com.paymybuddy.paymybuddyapp.service.ITransactionService;
 public class PayMyBuddyController {
 	
 	@Autowired
-	private IAuthenticationService authenticationService;
+	private ICustomerService authenticationService;
 	
 	@Autowired
 	private ITransactionService transactionService;
@@ -63,7 +63,9 @@ public class PayMyBuddyController {
 		currentCustomer.setPassword(password);
 		currentCustomer.setFirstName(firstName);
 		currentCustomer.setLastName(lastName);
+		currentCustomer.setAmount(0);
 		authenticationService.addCustomer(currentCustomer);
+		model.addAttribute("customer", currentCustomer);
 		model.addAttribute("connections", currentCustomer.getConnections());
 		
 		model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
@@ -72,7 +74,13 @@ public class PayMyBuddyController {
 	
 	@PostMapping("/addConnection")
 	public String addConnection(@RequestParam(name="connectionEmail") String connectionEmail, Model model) {
-		currentCustomer = authenticationService.addConnection(currentCustomer, connectionEmail);
+		boolean result = authenticationService.addConnection(currentCustomer, connectionEmail);
+		if(result) {
+			model.addAttribute("addingConnectionMessage", connectionEmail + " added");
+		} else {
+			model.addAttribute("addingConnectionMessage", connectionEmail + " not found");
+		}
+		model.addAttribute("customer", currentCustomer);
 		model.addAttribute("connections", currentCustomer.getConnections());
 		
 		model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
@@ -90,7 +98,7 @@ public class PayMyBuddyController {
      * @return transfer page or sign in page with message "Wrong email or password"
      */		
 	@PostMapping("/signIn")
-	public String transfer(@RequestParam(name="email") String email, @RequestParam(name="password") String password,
+	public String login(@RequestParam(name="email") String email, @RequestParam(name="password") String password,
 			Model model) {
 		currentCustomer = authenticationService.authenticate(email, password);
 		
@@ -153,8 +161,12 @@ public class PayMyBuddyController {
 	
 	@PostMapping("/recoverToBankAccount")
 	public String recoverToBankAccount(@RequestParam(name="amountRecoveredToBankAccount") double amount, Model model) {
-		currentCustomer = authenticationService.recoverToBankAccount(currentCustomer, amount);
-		
+		boolean result = authenticationService.recoverToBankAccount(currentCustomer, amount);
+		if(result) {
+			model.addAttribute("payMyBuddyToBankAccountMessage", "Transaction done");
+		} else {
+			model.addAttribute("payMyBuddyToBankAccountMessage", "Transaction failed");
+		}
 		model.addAttribute("customer", currentCustomer);
 		return "profile";
 		

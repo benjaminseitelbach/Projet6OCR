@@ -1,5 +1,6 @@
 package com.paymybuddy.paymybuddyapp.service;
 
+import java.util.Optional;
 import java.util.Set;
 
 import javax.transaction.Transactional;
@@ -13,7 +14,7 @@ import com.paymybuddy.paymybuddyapp.model.BankAccount;
 import com.paymybuddy.paymybuddyapp.model.Customer;
 
 @Service
-public class AuthenticationService implements IAuthenticationService {
+public class CustomerService implements ICustomerService {
 
 	@Autowired
 	private CustomerRepository customerRepository;
@@ -24,11 +25,18 @@ public class AuthenticationService implements IAuthenticationService {
 		return customerRepository.save(customer);
 	}
 	
-	public Customer addConnection(Customer customer, String connectionEmail) {
+	public boolean addConnection(Customer customer, String connectionEmail) {
 		Set<Customer> connections = customer.getConnections();
-		Customer connection = customerRepository.findByEmail(connectionEmail).get();
-		connections.add(connection);
-		return customerRepository.save(customer);
+		Optional<Customer> optConnection = customerRepository.findByEmail(connectionEmail);
+		if(optConnection.isPresent()) {
+			Customer connection = optConnection.get();
+			connections.add(connection);
+			customerRepository.save(customer);
+			return true;
+		} else {
+			return false;
+		}
+				
 	}
 	
 	/**
@@ -57,19 +65,19 @@ public class AuthenticationService implements IAuthenticationService {
 		BankAccount bankAccount = customer.getBankAccount();
 		double bankAccountAmount = bankAccount.getAmount();
 		//TODO CAN BANK ACCOUNT AMOUNT BE < 0 ?
-		if(bankAccountAmount - amount >= 0) {
+		//if(bankAccountAmount - amount >= 0) {
 			double bankAccountNewAmount = bankAccountAmount - amount;
 			bankAccount.setAmount(bankAccountNewAmount);
 			
 			double payMyBuddyNewAmount = customer.getAmount() + amount;
 			customer.setAmount(payMyBuddyNewAmount);
 			customerRepository.save(customer);
-		}
+		//}
 		return customer;
 	}
 	
 	@Transactional
-	public Customer recoverToBankAccount(Customer customer, double amount) {
+	public boolean recoverToBankAccount(Customer customer, double amount) {
 		double payMyBuddyAmount = customer.getAmount();
 
 		if(payMyBuddyAmount - amount >= 0) {
@@ -81,10 +89,12 @@ public class AuthenticationService implements IAuthenticationService {
 			bankAccount.setAmount(bankAccountNewAmount);
 			
 			customerRepository.save(customer);
+			return true;
 		} else {
 			//TODO
+			return false;
 		}
-		return customer;
+		//return customer;
 	}
 	
 }

@@ -12,13 +12,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.paymybuddy.paymybuddyapp.model.Customer;
-import com.paymybuddy.paymybuddyapp.service.IAuthenticationService;
+import com.paymybuddy.paymybuddyapp.service.ICustomerService;
 
 @SpringBootTest
 public class AuthenticationServiceIntegrationTest {
 	
 	@Autowired
-	private IAuthenticationService authenticationService;
+	private ICustomerService authenticationService;
 	
 	@Test
 	public void authenticateCustomerJohnBoydTest() throws Exception {

@@ -17,7 +17,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
-
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Entity
@@ -30,6 +30,7 @@ public class Customer {
 	
 	@Column(name = "email")
 	@NotBlank(message = "Email is mandatory")
+	@Email
 	private String email;
 	
 	@Column(name = "password")

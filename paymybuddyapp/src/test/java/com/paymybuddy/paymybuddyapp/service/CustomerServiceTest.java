@@ -16,13 +16,13 @@ import com.paymybuddy.paymybuddyapp.dao.CustomerRepository;
 import com.paymybuddy.paymybuddyapp.model.Customer;
 
 @SpringBootTest
-public class AuthenticationServiceTest {
+public class CustomerServiceTest {
 
 	@MockBean
 	private CustomerRepository customerRepository;
 	
 	@Autowired
-	private IAuthenticationService authenticationService;
+	private ICustomerService authenticationService;
 	
 	@Test
 	public void authenticateCustomerJohnBoydTest() throws Exception {

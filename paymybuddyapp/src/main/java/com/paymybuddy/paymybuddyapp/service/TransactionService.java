@@ -72,5 +72,4 @@ public class TransactionService implements ITransactionService {
 		return transactionRepository.findBySender(customer);
 	}
 	
-
 }
