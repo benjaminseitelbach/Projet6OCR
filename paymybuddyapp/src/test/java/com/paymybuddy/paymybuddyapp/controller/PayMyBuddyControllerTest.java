@@ -21,6 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
+import com.paymybuddy.paymybuddyapp.model.BankAccount;
 import com.paymybuddy.paymybuddyapp.model.Customer;
 import com.paymybuddy.paymybuddyapp.service.CustomerService;
 import com.paymybuddy.paymybuddyapp.service.ICustomerService;
@@ -149,15 +150,29 @@ public class PayMyBuddyControllerTest {
 		
 	}
 	
-	/*
+	
 	@Test
 	public void addToPayMyBuddyTest() throws Exception {
+		double amount = 20;
 		
+		Customer customer = new Customer();
+		customer.setEmail(emailTest);
+		customer.setAmount(0);
 		
-		Mockito.when(customerService.sendToPayMyBuddy(customer, 20)).thenReturn(customer);
+		Customer customer2 = new Customer();
+		customer2.setEmail(emailTest);
+		customer2.setAmount(amount);
+		
+		BankAccount bankAccount = new BankAccount();
+		bankAccount.setIban("IBAN TEST");
+		bankAccount.setAmount(100);
+		
+		customer2.setBankAccount(bankAccount);
+		
+		Mockito.when(customerService.sendToPayMyBuddy(Mockito.any(Customer.class), Mockito.anyDouble())).thenReturn(customer2);
 		
 		mockMvc.perform(post("/addToPayMyBuddy")
-			   .param("amountAddedToPayMyBuddy", "10")
+			   .param("amountAddedToPayMyBuddy", String.valueOf(amount))
 			   .contentType(MediaType.APPLICATION_FORM_URLENCODED) 
 	           .accept(MediaType.APPLICATION_JSON)) 
 			   .andExpect(status().isOk())
@@ -165,7 +180,6 @@ public class PayMyBuddyControllerTest {
 	           .andReturn();
 		
 	}
-	*/
 	
 	
 }

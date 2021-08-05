@@ -9,6 +9,7 @@ import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.paymybuddy.paymybuddyapp.dao.BankAccountRepository;
 import com.paymybuddy.paymybuddyapp.dao.CustomerRepository;
 import com.paymybuddy.paymybuddyapp.model.BankAccount;
 import com.paymybuddy.paymybuddyapp.model.Customer;
@@ -58,6 +59,18 @@ public class CustomerService implements ICustomerService {
 			
 		}
 		return null;
+	}
+	
+	public Customer addBankAccount(Customer customer, String iban, double amount) {
+		BankAccount bankAccount = new BankAccount();
+		bankAccount.setIban(iban);
+		bankAccount.setAmount(amount);
+		bankAccount.setCustomer(customer);
+		
+		customer.setBankAccount(bankAccount);
+		
+		return customerRepository.save(customer);
+		
 	}
 	
 	@Transactional

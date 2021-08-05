@@ -31,7 +31,7 @@ public class TransactionService implements ITransactionService {
      * @return true if transaction OK and false if not
      */	
 	@Transactional
-	public boolean sendMoney(Customer sender, int receiverId, double amount) {
+	public boolean sendMoney(Customer sender, int receiverId, double amount, String description) {
 		
 		double amountWithTax = amount + 0.005 * amount;
 		double senderAmount = sender.getAmount();
@@ -50,7 +50,7 @@ public class TransactionService implements ITransactionService {
 			Transaction transaction = new Transaction();
 			transaction.setAmount(amount);
 			Date date = new Date();
-			transaction.setDescription("Transaction done on " + date);
+			transaction.setDescription(description);
 			transaction.setDate(date);
 			transaction.setSender(sender);
 			transaction.setReceiver(receiver);

@@ -7,7 +7,7 @@ import com.paymybuddy.paymybuddyapp.model.Transaction;
 
 public interface ITransactionService {
 
-	public boolean sendMoney(Customer customer, int connectionId, double amount);
+	public boolean sendMoney(Customer customer, int connectionId, double amount, String description);
 	
 	public List<Transaction> getTransactions(Customer sender);
 	

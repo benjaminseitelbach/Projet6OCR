@@ -17,7 +17,7 @@ import com.paymybuddy.paymybuddyapp.service.ITransactionService;
 public class PayMyBuddyController {
 	
 	@Autowired
-	private ICustomerService authenticationService;
+	private ICustomerService customerService;
 	
 	@Autowired
 	private ITransactionService transactionService;
@@ -64,7 +64,7 @@ public class PayMyBuddyController {
 		currentCustomer.setFirstName(firstName);
 		currentCustomer.setLastName(lastName);
 		currentCustomer.setAmount(0);
-		authenticationService.addCustomer(currentCustomer);
+		customerService.addCustomer(currentCustomer);
 		model.addAttribute("customer", currentCustomer);
 		model.addAttribute("connections", currentCustomer.getConnections());
 		
@@ -74,7 +74,7 @@ public class PayMyBuddyController {
 	
 	@PostMapping("/addConnection")
 	public String addConnection(@RequestParam(name="connectionEmail") String connectionEmail, Model model) {
-		boolean result = authenticationService.addConnection(currentCustomer, connectionEmail);
+		boolean result = customerService.addConnection(currentCustomer, connectionEmail);
 		if(result) {
 			model.addAttribute("addingConnectionMessage", connectionEmail + " added");
 		} else {
@@ -100,7 +100,7 @@ public class PayMyBuddyController {
 	@PostMapping("/signIn")
 	public String login(@RequestParam(name="email") String email, @RequestParam(name="password") String password,
 			Model model) {
-		currentCustomer = authenticationService.authenticate(email, password);
+		currentCustomer = customerService.authenticate(email, password);
 		
 		if(currentCustomer != null) {
 			model.addAttribute("customer", currentCustomer);
@@ -130,9 +130,10 @@ public class PayMyBuddyController {
      */	
 	@PostMapping("/sendMoney") 
 	public String sendMoney(@RequestParam(name="connection") int connectionId,
-			@RequestParam(name="amount") double amount, Model model) {
+			@RequestParam(name="amount") double amount, @RequestParam(name="description") String description,
+			Model model) {
 
-		boolean result = transactionService.sendMoney(currentCustomer, connectionId, amount);
+		boolean result = transactionService.sendMoney(currentCustomer, connectionId, amount, description);
 		if(result) {
 			model.addAttribute("message", "Transaction done");
 		} else {
@@ -147,12 +148,26 @@ public class PayMyBuddyController {
 	@GetMapping("/profile")
 	public String accessProfilePage(Model model) {
 		model.addAttribute("customer", currentCustomer);
+		if(currentCustomer.getBankAccount() == null) {
+			System.out.println("BANK ACCOUNT IS NULL");
+		} else {
+			System.out.println("BANK ACCOUNT IS NOT NULL");
+		}
 		return "profile";
+	}
+	
+	@PostMapping("/addBankAccount")
+	public String addBankAccount(@RequestParam(name="newBankAccountIban") String iban, 
+			@RequestParam(name="newBankAccountAmount") double amount, Model model) {
+		currentCustomer = customerService.addBankAccount(currentCustomer, iban, amount);
+		model.addAttribute("customer", currentCustomer);
+		return "profile";
+		
 	}
 	
 	@PostMapping("/addToPayMyBuddy")
 	public String addToPayMyBuddy(@RequestParam(name="amountAddedToPayMyBuddy") double amount, Model model) {
-		currentCustomer = authenticationService.sendToPayMyBuddy(currentCustomer, amount);
+		currentCustomer = customerService.sendToPayMyBuddy(currentCustomer, amount);
 		
 		model.addAttribute("customer", currentCustomer);
 		return "profile";
@@ -161,7 +176,7 @@ public class PayMyBuddyController {
 	
 	@PostMapping("/recoverToBankAccount")
 	public String recoverToBankAccount(@RequestParam(name="amountRecoveredToBankAccount") double amount, Model model) {
-		boolean result = authenticationService.recoverToBankAccount(currentCustomer, amount);
+		boolean result = customerService.recoverToBankAccount(currentCustomer, amount);
 		if(result) {
 			model.addAttribute("payMyBuddyToBankAccountMessage", "Transaction done");
 		} else {

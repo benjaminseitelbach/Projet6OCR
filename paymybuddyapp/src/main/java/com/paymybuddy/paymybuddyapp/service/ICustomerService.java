@@ -10,6 +10,8 @@ public interface ICustomerService {
 	
 	public boolean addConnection(Customer customer, String connectionEmail);
 	
+	public Customer addBankAccount(Customer customer, String iban, double amount);
+	
 	public Customer sendToPayMyBuddy(Customer customer, double amount);
 	
 	public boolean recoverToBankAccount(Customer customer, double amount);

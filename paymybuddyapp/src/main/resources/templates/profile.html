@@ -58,23 +58,35 @@
 		<div class="container">
 			<h5>PayMyBuddy available amount:</h5>
 			<span th:text="${customer.amount}"></span>
-			<h5>Available Bank Account:</h5>
-			<span th:text="${'IBAN:' + customer.bankAccount.iban}"></span>
 			</br>
-			<span th:text="${'Amount:' + customer.bankAccount.amount}"></span>
-			<form method="post" action="/addToPayMyBuddy">
-				<input name="amountAddedToPayMyBuddy" type="number" step="0.01" value="0">
-				<button type="submit" class="btn btn-success">Add to PayMyBuddy</button>
+			<div th:if="${customer.bankAccount == null}">No Bank Account in data base
+				<form method="post" action="/addBankAccount">
+					<input name="newBankAccountIban" type="text" placeholder="IBAN">
+					<input name="newBankAccountAmount" type="number" step="0.01" value="0">
+					<button type="submit" class="btn btn-success">Add Bank Account</button>
 
-			</form>
-			</br>
-			<form method="post" action="/recoverToBankAccount">
-				<input name="amountRecoveredToBankAccount" type="number" step="0.01" value="0">
-				<button type="submit" class="btn btn-success">Recover to Bank Account</button>
+				</form>
+			</div>
 
-			</form>
-			<span th:text="${payMyBuddyToBankAccountMessage}"></span>
-			
+			<div th:unless="${customer.bankAccount == null}">
+				<h5>Available Bank Account:</h5>
+				<span th:text="${'IBAN:' + customer.bankAccount.iban}"></span>
+				</br>
+				<span th:text="${'Amount:' + customer.bankAccount.amount}"></span>
+				<form method="post" action="/addToPayMyBuddy">
+					<input name="amountAddedToPayMyBuddy" type="number" step="0.01" value="0">
+					<button type="submit" class="btn btn-success">Add to PayMyBuddy</button>
+
+				</form>
+				</br>
+				<form method="post" action="/recoverToBankAccount">
+					<input name="amountRecoveredToBankAccount" type="number" step="0.01" value="0">
+					<button type="submit" class="btn btn-success">Recover to Bank Account</button>
+
+				</form>
+				<span th:text="${payMyBuddyToBankAccountMessage}"></span>
+			</div>
+
 		</div>
 
 		<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js"
