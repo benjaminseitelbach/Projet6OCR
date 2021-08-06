@@ -2,7 +2,9 @@ package com.paymybuddy.paymybuddyapp.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import com.paymybuddy.paymybuddyapp.dao.CustomerRepository;
+import com.paymybuddy.paymybuddyapp.model.BankAccount;
 import com.paymybuddy.paymybuddyapp.model.Customer;
 
 @SpringBootTest
@@ -74,18 +77,121 @@ public class CustomerServiceTest {
 		assertEquals(0, result.getAmount());
 	}
 	
-/*	
+	
 	@Test
 	public void addConnectionTest() throws Exception {
+		Customer customer = new Customer();
+		customer.setEmail(customerEmailTest);
 		
+		String connectionEmail = "drk@email.com";
 		
-		Customer result = customerService.addConnection(customer, connectionEmail);
+		Customer connection = new Customer();
+		connection.setEmail(connectionEmail);
+		
+		Optional<Customer> optConnection = Optional.of(connection);
+		
+		Customer customerWithConnection = new Customer();
+		customerWithConnection.setEmail(customerEmailTest);
+		
+		Set<Customer> connections = new HashSet<>();
+		connections.add(connection);
+		
+		customerWithConnection.setConnections(connections);
+		
+		Mockito.when(customerRepository.findByEmail(connectionEmail)).thenReturn(optConnection);
+		Mockito.when(customerRepository.save(customer)).thenReturn(customerWithConnection);
+		
+		boolean result = customerService.addConnection(customer, connectionEmail);
+		assertEquals(true, result);
+		
+		boolean connectionFound = false;
+		for(Customer customerConnection : customer.getConnections()) {
+			if(customerConnection.getEmail().equals(connectionEmail)) {
+				connectionFound = true;
+			}
+		}
+		assertEquals(true, connectionFound);
 		
 	}
 	
-	public Customer addBankAccount(Customer customer, String iban, double amount);
 	
-	public boolean sendToPayMyBuddy(Customer customer, double amount);
+	@Test
+	public void addBankAccountTest() throws Exception {
+		String customerEmail = "newcustomer@email.com";
+		
+		Customer customer = new Customer();
+		customer.setEmail(customerEmail);
+		
+		String iban = "IBANTEST";
+		double amount = 100;
+		
+		BankAccount bankAccount = new BankAccount();
+		bankAccount.setIban(iban);
+		bankAccount.setAmount(amount);
+		
+		Customer customerWithBankAccount = new Customer();
+		customerWithBankAccount.setEmail(customerEmail);	
+		customerWithBankAccount.setBankAccount(bankAccount);
+		
+		Mockito.when(customerRepository.save(customer)).thenReturn(customerWithBankAccount);
+		
+		Customer result = customerService.addBankAccount(customer, iban, amount);
+		BankAccount bankAccountResult = result.getBankAccount();
+		assertEquals(iban, bankAccountResult.getIban());
+		assertEquals(amount, bankAccountResult.getAmount());
+	}
+	
+	@Test
+	public void sendToPayMyBuddyTest() throws Exception {
+		double transactionAmount = 10;
+		
+		BankAccount bankAccount = new BankAccount();
+		bankAccount.setAmount(customerAmountTest);
+		
+		Customer customer = new Customer();
+		customer.setEmail(customerEmailTest);
+		customer.setAmount(0);
+		customer.setBankAccount(bankAccount);
+		
+		BankAccount bankAccountAfterTransaction = new BankAccount();
+		bankAccountAfterTransaction.setAmount(customerAmountTest - transactionAmount);
+		
+		Customer customerAfterTransaction = new Customer();
+		customerAfterTransaction.setEmail(customerEmailTest);
+		customerAfterTransaction.setBankAccount(bankAccountAfterTransaction);
+			
+		Mockito.when(customerRepository.save(customer)).thenReturn(customerAfterTransaction);
+		
+		boolean result = customerService.sendToPayMyBuddy(customer, transactionAmount);
+		assertEquals(true, result);
+	}
+	
+	@Test
+	public void recoverToBankAccountTest() throws Exception {
+		double transactionAmount = 10;
+		
+		BankAccount bankAccount = new BankAccount();
+		bankAccount.setAmount(customerAmountTest);
+		
+		Customer customer = new Customer();
+		customer.setEmail(customerEmailTest);
+		customer.setAmount(0);
+		customer.setBankAccount(bankAccount);
+		
+		BankAccount bankAccountAfterTransaction = new BankAccount();
+		bankAccountAfterTransaction.setAmount(customerAmountTest + transactionAmount);
+		
+		Customer customerAfterTransaction = new Customer();
+		customerAfterTransaction.setEmail(customerEmailTest);
+		customerAfterTransaction.setBankAccount(bankAccountAfterTransaction);
+			
+		Mockito.when(customerRepository.save(customer)).thenReturn(customerAfterTransaction);
+		
+		boolean result = customerService.sendToPayMyBuddy(customer, transactionAmount);
+		assertEquals(true, result);
+	}
+	
+	/*
 	
 	public boolean recoverToBankAccount(Customer customer, double amount);
 */
