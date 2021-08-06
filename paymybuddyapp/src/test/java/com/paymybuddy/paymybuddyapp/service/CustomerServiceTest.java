@@ -22,34 +22,72 @@ public class CustomerServiceTest {
 	private CustomerRepository customerRepository;
 	
 	@Autowired
-	private ICustomerService authenticationService;
+	private ICustomerService customerService;
+	
+	String customerEmailTest = "jaboyd@email.com";
+	String customerPasswordTest = "password1";
+	String customerFirstNameTest = "John";
+	String customerLastNameTest = "Boyd";
+	double customerAmountTest = 100;
 	
 	@Test
 	public void authenticateCustomerJohnBoydTest() throws Exception {
-		String email = "jaboyd@email.com";
-		String password = "password1";
-		String firstName = "John";
-		String lastName = "Boyd";
-		double amount = 100;
-		
 		Customer customer = new Customer();
-		customer.setId(1);
-		customer.setEmail(email);
+		customer.setEmail(customerEmailTest);
 		customer.setPassword("$2a$10$alZ2ltll1Euc5utRzJSxBuLa/TB1NuJXqLRqBIRl3OukEBwP68iF.");
-		customer.setFirstName(firstName);
-		customer.setLastName(lastName);
-		customer.setAmount(amount);
+		customer.setFirstName(customerFirstNameTest);
+		customer.setLastName(customerLastNameTest);
+		customer.setAmount(customerAmountTest);
 		
 		Optional<Customer> optCustomer = Optional.of(customer);
+				
+		Mockito.when(customerRepository.existsByEmail(customerEmailTest)).thenReturn(true);
+		Mockito.when(customerRepository.findByEmail(customerEmailTest)).thenReturn(optCustomer);
 		
-		
-		Mockito.when(customerRepository.existsByEmail(email)).thenReturn(true);
-		Mockito.when(customerRepository.findByEmail(email)).thenReturn(optCustomer);
-		
-		Customer result = authenticationService.authenticate(email, password);
-		assertEquals(email, result.getEmail());
-		assertEquals(firstName, result.getFirstName());
-		assertEquals(lastName, result.getLastName());
-		assertEquals(amount, result.getAmount());
+		Customer result = customerService.authenticate(customerEmailTest, customerPasswordTest);
+		assertEquals(customerEmailTest, result.getEmail());
+		assertEquals(customerFirstNameTest, result.getFirstName());
+		assertEquals(customerLastNameTest, result.getLastName());
+		assertEquals(customerAmountTest, result.getAmount());
 	}
+	
+	@Test
+	public void addCustomerTest() throws Exception {
+		String emailTest = "test@email.com";
+		String passwordTest = "passwordtest";
+		String firstNameTest = "FirstNameTest";
+		String lastNameTest = "LastNameTest";
+		
+		Customer customer = new Customer();
+		customer.setEmail(emailTest);
+		customer.setPassword(passwordTest);
+		customer.setFirstName(firstNameTest);
+		customer.setLastName(lastNameTest);
+		
+		Mockito.when(customerRepository.existsByEmail(emailTest)).thenReturn(false);
+		Mockito.when(customerRepository.save(customer)).thenReturn(customer);
+		
+		Customer result = customerService.addCustomer(customer); 
+		assertEquals(emailTest, result.getEmail());
+		assertEquals(firstNameTest, result.getFirstName());
+		assertEquals(lastNameTest, result.getLastName());
+		assertEquals(0, result.getAmount());
+	}
+	
+/*	
+	@Test
+	public void addConnectionTest() throws Exception {
+		
+		
+		Customer result = customerService.addConnection(customer, connectionEmail);
+		
+	}
+	
+	public Customer addBankAccount(Customer customer, String iban, double amount);
+	
+	public boolean sendToPayMyBuddy(Customer customer, double amount);
+	
+	public boolean recoverToBankAccount(Customer customer, double amount);
+*/
+
 }

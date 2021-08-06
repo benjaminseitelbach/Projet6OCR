@@ -58,18 +58,27 @@ public class PayMyBuddyController {
 	public String accessTransferPageBySignUp(@RequestParam(name="email") String email, 
 			@RequestParam(name="password") String password, @RequestParam(name="firstName") String firstName,
 			@RequestParam(name="lastName") String lastName, Model model) {
+		
+		
 		currentCustomer = new Customer();
 		currentCustomer.setEmail(email);
 		currentCustomer.setPassword(password);
 		currentCustomer.setFirstName(firstName);
 		currentCustomer.setLastName(lastName);
 		currentCustomer.setAmount(0);
-		customerService.addCustomer(currentCustomer);
-		model.addAttribute("customer", currentCustomer);
-		model.addAttribute("connections", currentCustomer.getConnections());
+		currentCustomer = customerService.addCustomer(currentCustomer);
+		if(currentCustomer != null) {
+			model.addAttribute("customer", currentCustomer);
+			model.addAttribute("connections", currentCustomer.getConnections());
+			
+			model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
+			return "transfer";
+		} else {
+			model.addAttribute("signUpMessage", "Email already exists");
+			return "signUp";
+		}
 		
-		model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
-		return "transfer";		
+				
 	}
 	
 	@PostMapping("/addConnection")
@@ -148,11 +157,6 @@ public class PayMyBuddyController {
 	@GetMapping("/profile")
 	public String accessProfilePage(Model model) {
 		model.addAttribute("customer", currentCustomer);
-		if(currentCustomer.getBankAccount() == null) {
-			System.out.println("BANK ACCOUNT IS NULL");
-		} else {
-			System.out.println("BANK ACCOUNT IS NOT NULL");
-		}
 		return "profile";
 	}
 	
@@ -167,8 +171,12 @@ public class PayMyBuddyController {
 	
 	@PostMapping("/addToPayMyBuddy")
 	public String addToPayMyBuddy(@RequestParam(name="amountAddedToPayMyBuddy") double amount, Model model) {
-		currentCustomer = customerService.sendToPayMyBuddy(currentCustomer, amount);
-		
+		boolean result = customerService.sendToPayMyBuddy(currentCustomer, amount);
+		if(result) {
+			model.addAttribute("bankAccountToPayMyBuddyMessage", "Transaction done");
+		} else {
+			model.addAttribute("bankAccountToPayMyBuddyMessage", "Transaction failed");
+		}
 		model.addAttribute("customer", currentCustomer);
 		return "profile";
 		

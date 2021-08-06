@@ -21,9 +21,16 @@ public class CustomerService implements ICustomerService {
 	private CustomerRepository customerRepository;
 	
 	public Customer addCustomer(Customer customer) {
-		String hashedPassword = BCrypt.hashpw(customer.getPassword(), BCrypt.gensalt());
-		customer.setPassword(hashedPassword);
-		return customerRepository.save(customer);
+		
+		if(customerRepository.existsByEmail(customer.getEmail())) {
+			return null;
+		} else {
+			String hashedPassword = BCrypt.hashpw(customer.getPassword(), BCrypt.gensalt());
+			customer.setPassword(hashedPassword);
+			return customerRepository.save(customer);
+		}
+		
+		
 	}
 	
 	public boolean addConnection(Customer customer, String connectionEmail) {
@@ -74,19 +81,21 @@ public class CustomerService implements ICustomerService {
 	}
 	
 	@Transactional
-	public Customer sendToPayMyBuddy(Customer customer, double amount) {
+	public boolean sendToPayMyBuddy(Customer customer, double amount) {
 		BankAccount bankAccount = customer.getBankAccount();
 		double bankAccountAmount = bankAccount.getAmount();
-		//TODO CAN BANK ACCOUNT AMOUNT BE < 0 ?
-		//if(bankAccountAmount - amount >= 0) {
+
+		if(bankAccountAmount - amount >= 0) {
 			double bankAccountNewAmount = bankAccountAmount - amount;
 			bankAccount.setAmount(bankAccountNewAmount);
 			
 			double payMyBuddyNewAmount = customer.getAmount() + amount;
 			customer.setAmount(payMyBuddyNewAmount);
 			customerRepository.save(customer);
-		//}
-		return customer;
+			return true;
+		} else {
+			return false;
+		}
 	}
 	
 	@Transactional
@@ -104,10 +113,8 @@ public class CustomerService implements ICustomerService {
 			customerRepository.save(customer);
 			return true;
 		} else {
-			//TODO
 			return false;
 		}
-		//return customer;
 	}
 	
 }

@@ -87,10 +87,10 @@ public class PayMyBuddyControllerTest {
 		Customer customer = new Customer();
 		customer.setEmail(emailTest);
 		customer.setPassword(passwordTest);
-		customer.setFirstName("FirstNameTest");
-		customer.setLastName("LastNameTest");
+		customer.setFirstName(firstName);
+		customer.setLastName(lastName);
 		
-		Mockito.when(customerService.addCustomer(customer)).thenReturn(customer);
+		Mockito.when(customerService.addCustomer(Mockito.any(Customer.class))).thenReturn(customer);
 		
 		mockMvc.perform(post("/signUp") 
                .param("email", emailTest) 
@@ -98,9 +98,9 @@ public class PayMyBuddyControllerTest {
                .param("firstName", firstName)
                .param("lastName", lastName)
                .contentType(MediaType.APPLICATION_FORM_URLENCODED) 
-               .accept(MediaType.APPLICATION_JSON)) //
+               .accept(MediaType.APPLICATION_JSON)) 
 		       .andExpect(status().isOk())
-               .andExpect(view().name("transfer"))// 
+               .andExpect(view().name("transfer")) 
                .andReturn();
 	}
 	
@@ -136,12 +136,16 @@ public class PayMyBuddyControllerTest {
 		customer.setLastName("Boyd");
 		customer.setAmount(100);
 		
+		int connectionId = 2;
+		String description = "Description Test";
+		double amount = 10;
 		
-		Mockito.when(transactionService.sendMoney(customer, 2, 10)).thenReturn(true);
+		Mockito.when(transactionService.sendMoney(customer, connectionId, amount, description)).thenReturn(true);
 		
 		mockMvc.perform(post("/sendMoney")  
-	           .param("connection", "2") 
-	           .param("amount", "10")
+	           .param("connection", String.valueOf(connectionId)) 
+	           .param("amount", String.valueOf(amount))
+	           .param("description", description)
 	           .contentType(MediaType.APPLICATION_FORM_URLENCODED) 
 	           .accept(MediaType.APPLICATION_JSON)) 
 			   .andExpect(status().isOk())
@@ -159,17 +163,7 @@ public class PayMyBuddyControllerTest {
 		customer.setEmail(emailTest);
 		customer.setAmount(0);
 		
-		Customer customer2 = new Customer();
-		customer2.setEmail(emailTest);
-		customer2.setAmount(amount);
-		
-		BankAccount bankAccount = new BankAccount();
-		bankAccount.setIban("IBAN TEST");
-		bankAccount.setAmount(100);
-		
-		customer2.setBankAccount(bankAccount);
-		
-		Mockito.when(customerService.sendToPayMyBuddy(Mockito.any(Customer.class), Mockito.anyDouble())).thenReturn(customer2);
+		Mockito.when(customerService.sendToPayMyBuddy(Mockito.any(Customer.class), Mockito.anyDouble())).thenReturn(true);
 		
 		mockMvc.perform(post("/addToPayMyBuddy")
 			   .param("amountAddedToPayMyBuddy", String.valueOf(amount))
@@ -180,6 +174,28 @@ public class PayMyBuddyControllerTest {
 	           .andReturn();
 		
 	}
+	
+	@Test
+	public void recoverToBankAccountTest() throws Exception {
+		double amount = 20;
+		
+		Customer customer = new Customer();
+		customer.setEmail(emailTest);
+		customer.setAmount(0);
+		
+		Mockito.when(customerService.recoverToBankAccount(Mockito.any(Customer.class), Mockito.anyDouble()))
+			   .thenReturn(true);
+		
+		mockMvc.perform(post("/recoverToBankAccount")
+			   .param("amountRecoveredToBankAccount", String.valueOf(amount))
+			   .contentType(MediaType.APPLICATION_FORM_URLENCODED) 
+	           .accept(MediaType.APPLICATION_JSON)) 
+			   .andExpect(status().isOk())
+	           .andExpect(view().name("profile")) 
+	           .andReturn();
+		
+	}
+	
 	
 	
 }

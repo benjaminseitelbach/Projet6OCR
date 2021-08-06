@@ -88,8 +88,12 @@ public class TransactionServiceTest {
 		Customer receiverWithNewAmount = new Customer();
 		senderWithNewAmount.setAmount(receiverNewAmount);
 		
+		double transactionAmount = 20;
+		String description = "Description Test";
+		
 		Transaction transaction = new Transaction();
-		transaction.setAmount(20);
+		transaction.setAmount(transactionAmount);
+		transaction.setDescription(description);
 		
 		Optional<Customer> optReceiver = Optional.of(receiver);
 		
@@ -98,10 +102,11 @@ public class TransactionServiceTest {
 		Mockito.when(customerRepository.save(receiverWithNewAmount)).thenReturn(receiverWithNewAmount);
 		Mockito.when(transactionRepository.save(transaction)).thenReturn(transaction);
 		
-		boolean result = transactionService.sendMoney(sender, receiverId, 20);
+		boolean result = transactionService.sendMoney(sender, receiverId, transactionAmount, description);
 		assertEquals(true, result);
 		assertEquals(senderNewAmount, sender.getAmount());
 		assertEquals(receiverNewAmount, receiver.getAmount());
+		
 	}
 	
 	

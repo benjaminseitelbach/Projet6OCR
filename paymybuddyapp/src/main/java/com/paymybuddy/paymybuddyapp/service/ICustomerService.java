@@ -12,7 +12,7 @@ public interface ICustomerService {
 	
 	public Customer addBankAccount(Customer customer, String iban, double amount);
 	
-	public Customer sendToPayMyBuddy(Customer customer, double amount);
+	public boolean sendToPayMyBuddy(Customer customer, double amount);
 	
 	public boolean recoverToBankAccount(Customer customer, double amount);
 	
