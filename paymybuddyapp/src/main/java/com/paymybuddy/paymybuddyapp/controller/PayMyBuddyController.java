@@ -54,12 +54,23 @@ public class PayMyBuddyController {
 		return "signUp";
 	}
 	
+	/**
+     * Access transfer page by sign up: if email doesn't already exists, customer is registered and
+     * returns transfer page and if not, print message "Email already exists"
+     *
+     * @param email
+     * @param password
+     * @param firstName
+     * @param lastName
+     * @param model
+     *
+     * @return transfer page or sign up page with message "Email already exists"
+     */	
 	@PostMapping("/signUp")
 	public String accessTransferPageBySignUp(@RequestParam(name="email") String email, 
 			@RequestParam(name="password") String password, @RequestParam(name="firstName") String firstName,
 			@RequestParam(name="lastName") String lastName, Model model) {
-		
-		
+			
 		currentCustomer = new Customer();
 		currentCustomer.setEmail(email);
 		currentCustomer.setPassword(password);
@@ -79,21 +90,6 @@ public class PayMyBuddyController {
 		}
 		
 				
-	}
-	
-	@PostMapping("/addConnection")
-	public String addConnection(@RequestParam(name="connectionEmail") String connectionEmail, Model model) {
-		boolean result = customerService.addConnection(currentCustomer, connectionEmail);
-		if(result) {
-			model.addAttribute("addingConnectionMessage", connectionEmail + " added");
-		} else {
-			model.addAttribute("addingConnectionMessage", connectionEmail + " not found");
-		}
-		model.addAttribute("customer", currentCustomer);
-		model.addAttribute("connections", currentCustomer.getConnections());
-		
-		model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
-		return "transfer";
 	}
 	
 	/**
@@ -129,6 +125,29 @@ public class PayMyBuddyController {
 	}
 	
 	/**
+     * Add connection: add corresponding email as a connection id order to transfer money to it
+     *
+     * @param connectionEmail
+     * @param model
+     *
+     * @return transfer page
+     */	
+	@PostMapping("/addConnection")
+	public String addConnection(@RequestParam(name="connectionEmail") String connectionEmail, Model model) {
+		boolean result = customerService.addConnection(currentCustomer, connectionEmail);
+		if(result) {
+			model.addAttribute("addingConnectionMessage", connectionEmail + " added");
+		} else {
+			model.addAttribute("addingConnectionMessage", connectionEmail + " not found");
+		}
+		model.addAttribute("customer", currentCustomer);
+		model.addAttribute("connections", currentCustomer.getConnections());
+		
+		model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
+		return "transfer";
+	}
+		
+	/**
      * Send money 
      *
      * @param connection ID
@@ -154,12 +173,28 @@ public class PayMyBuddyController {
 		return "transfer";
 	}
 	
+	/**
+     * Access profile page
+     *
+     * @param model
+     *
+     * @return profile page
+     */	
 	@GetMapping("/profile")
 	public String accessProfilePage(Model model) {
 		model.addAttribute("customer", currentCustomer);
 		return "profile";
 	}
 	
+	/**
+     * Add bank account: add corresponding iban and amount as a bank account for current customer
+     *
+     * @param iban
+     * @param amount
+     * @param model
+     *
+     * @return profile page
+     */	
 	@PostMapping("/addBankAccount")
 	public String addBankAccount(@RequestParam(name="newBankAccountIban") String iban, 
 			@RequestParam(name="newBankAccountAmount") double amount, Model model) {
@@ -169,6 +204,14 @@ public class PayMyBuddyController {
 		
 	}
 	
+	/**
+     * Add to PayMyBuddy: add amount entered to PayMyBuddy account
+     *
+     * @param amount
+     * @param model
+     *
+     * @return profile page
+     */	
 	@PostMapping("/addToPayMyBuddy")
 	public String addToPayMyBuddy(@RequestParam(name="amountAddedToPayMyBuddy") double amount, Model model) {
 		boolean result = customerService.sendToPayMyBuddy(currentCustomer, amount);
@@ -182,6 +225,14 @@ public class PayMyBuddyController {
 		
 	}
 	
+	/**
+     * Recover to bank account: recover amount entered to bank account
+     *
+     * @param amount
+     * @param model
+     *
+     * @return profile page
+     */	
 	@PostMapping("/recoverToBankAccount")
 	public String recoverToBankAccount(@RequestParam(name="amountRecoveredToBankAccount") double amount, Model model) {
 		boolean result = customerService.recoverToBankAccount(currentCustomer, amount);
@@ -195,6 +246,13 @@ public class PayMyBuddyController {
 		
 	}
 	
+	/**
+     * Access tranfer page
+     *
+     * @param model
+     *
+     * @return transfer page
+     */	
 	@GetMapping("/transfer")
 	public String accessTransferPage(Model model) {
 		model.addAttribute("customer", currentCustomer);
@@ -202,7 +260,5 @@ public class PayMyBuddyController {
 		model.addAttribute("transactions", transactionService.getTransactions(currentCustomer));
 		return "transfer";
 	}
-	
-	
-	
+		
 }
